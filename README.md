@@ -54,5 +54,5 @@ All charts are **interactive** and allow users to:
 - **Industry Selection**: Users can focus on specific industries to analyze trends.
 
 ## Example Sketch
-![Dashboard Sketch](Billionires_sketch.jpg)
-[Link to Sketch](https://github.com/nevererror20/milestone1-group888/blob/main/Billionires_sketch.jpg)
+![Dashboard Sketch](/img/Billionires_sketch.jpg)
+[Link to Sketch](https://github.com/Raccoon-he/Billionaire-Dashboard/blob/main/img/Billionires_sketch.jpg)
