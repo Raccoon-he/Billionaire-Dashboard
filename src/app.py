@@ -9,7 +9,7 @@ import altair as alt
 
 
 # Load dataset
-df = pd.read_csv('../data/Billionaires_Statistics_Updated_Countrycoded.csv')
+df = pd.read_csv('./data/Billionaires_Statistics_Updated_Countrycoded.csv')
 
 # Group by country and count billionaires
 billionaires_count = df.groupby('country').size().reset_index(name='billionaire_count')
@@ -73,52 +73,42 @@ def create_pie_chart(selected_df, title):
 # Define the layout using dbc.Container
 app.layout = dbc.Container([
     # Main Heading
-    html.H1("Billionaires Landscape", style={'textAlign': 'center', 'color': '#FFD700', 'backgroundColor': '#000000', 'padding': '20px'}),
-
-    html.Br(),
+    html.H1("Billionaires Landscape", style={'textAlign': 'center', 'color': '#FFD700', 'backgroundColor': '#000000', 'padding': '10px 0', 'margin': '0', 'width': '100%'}),
 
     # Top Row for Key Statistics
     dbc.Row([
         dbc.Col([
-            html.P("Richest Person:", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '12px', 'textAlign': 'center'}),
-            html.P(f"{richest_person['personName']}", 
-                   style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'}),
-            html.P(f"${richest_person['finalWorth']}B", 
+            html.P("Richest Person", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
+            html.P(f"{richest_person['personName']} (${richest_person['finalWorth']}B)", 
+                   style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
+        ], width=3),
+
+        dbc.Col([
+            html.P("Youngest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
+            html.P(f"{youngest_billionaire['personName']} ({round(youngest_billionaire['age'])})", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
         ], width=2),
 
         dbc.Col([
-            html.P("Youngest Billionaire:", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '12px', 'textAlign': 'center'}),
-            html.P(f"{youngest_billionaire['personName']}", 
-                   style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'}),
-            html.P(f"Age {youngest_billionaire['age']}", 
+            html.P("Oldest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
+            html.P(f"{oldest_billionaire['personName']} ({round(oldest_billionaire['age'])})", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
         ], width=2),
 
         dbc.Col([
-            html.P("Oldest Billionaire:", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '12px', 'textAlign': 'center'}),
-            html.P(f"{oldest_billionaire['personName']}", 
-                   style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'}),
-            html.P(f"Age {oldest_billionaire['age']}", 
-                   style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-        ], width=2),
-
-        dbc.Col([
-            html.P("Top Industry:", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '12px', 'textAlign': 'center'}),
+            html.P("Top Industry", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
             html.P(f"{top_industry}", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
         ], width=2),
 
         dbc.Col([
-            html.P("Top Company:", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '12px', 'textAlign': 'center'}),
+            html.P("Top Company", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
             html.P(f"{top_company}", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
         ], width=2),
-    ], justify="center", style={'backgroundColor': '#000000', 'padding': '10px', 'borderBottom': '2px solid #FFD700'}),  # ✅ Connected Full Row
+    ], justify="center", style={'backgroundColor': '#000000', 'padding': '10px', 'borderBottom': '2px solid #FFD700', 'marginTop': '0'}), 
 
-    html.Br(),
-
-    # ✅ Main Dashboard Content
+    # Main Dashboard Content
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -131,42 +121,35 @@ app.layout = dbc.Container([
             ], color="light")
         ], width=6),
         
+        # line chart and pie chart
         dbc.Col([
             dbc.Card([
-                dbc.CardHeader("Final Worth by Age", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}),
+                dbc.CardHeader("Final Worth by Age", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
                 dcc.Dropdown(
                     id='industry-dropdown',
                     options=[{'label': ind, 'value': ind} for ind in df['industries'].unique()],
-                    value=[],  # Default value
-                    multi=True
+                    value=[], 
+                    multi=True,
+                    style={'margin': '0'}
                 ),
                 dcc.Graph(
                     id='line-chart',
-                    style={'height': '100%', 'padding': '3px'}
+                    style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                 )
-            ], color="light", style={'height': '50vh'})
-        ], width=4),
-    ]),
-
-    html.Br(),
-
-    # ✅ Pie Chart Section
-    dbc.Row([
-        dbc.Col([
+            ], color="light", style={'height': '35vh', 'padding': '0', 'margin': '0'}),
             dbc.Card([
                 dbc.CardHeader(
-                    "Top 5 Industries by Final Worth",
-                    style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}
+                    "Industries by Final Worth",
+                    style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}
                 ),
                 html.Iframe(
                     id='pie-chart',
-                    style={'border-width': '0', 'width': '100%', 'height': '400px'}  
+                    style={'border-width': '0', 'width': '100%', 'height': '300px'}  
                 )
-            ], color="light", style={'border': '2px solid #FFD700'})  
-        ], width=4),
+            ], color="light", style={'border': '2px solid #FFD700', 'margin': '0'})  
+        ], width=6),
     ]),
 ], fluid=True)
-
 
 # Callback to update the choropleth map
 @app.callback(
@@ -189,7 +172,6 @@ def update_map(clickData):
     return fig
 
 # Callback to update the line chart based on the clicked country and selected industries
-# Callback to update the line chart based on the clicked country and selected industries
 @app.callback(
     Output('line-chart', 'figure'),
     [Input('choropleth-map', 'clickData'),
@@ -200,13 +182,11 @@ def update_line_chart(clickData, selected_industries):
     if clickData is None:
         # Default to global data
         filtered_df = df
-        title = "Global Sum of Final Worth by Age"
     else:
         # Extract the country code from the click data
         country_code = clickData['points'][0]['location']
         # Filter the dataframe to include only the selected country
         filtered_df = df[df['country'] == country_code]
-        title = f"Sum of Final Worth by Age for {pycountry.countries.get(alpha_3=country_code).name}"
 
     # If industries are selected, further filter the dataframe
     if selected_industries:
@@ -218,8 +198,7 @@ def update_line_chart(clickData, selected_industries):
             line_data,
             x='Age',
             y='finalWorth',
-            color='industries',
-            title=title
+            color='industries'
         )
     else:
         # Default view: sum of finalWorth by Age
@@ -227,12 +206,19 @@ def update_line_chart(clickData, selected_industries):
         fig = px.line(
             line_data,
             x='Age',
-            y='finalWorth',
-            title=title
+            y='finalWorth'
         )
 
-    return fig
+    fig.update_layout(
+        margin=dict(l=1, r=1, t=1, b=1),  # Remove internal margins
+        autosize=True,  # Allow dynamic resizing
+        height=200,  # Adjust height dynamically (optional)
+        xaxis = dict(showgrid=True, gridcolor='lightgray'),
+        yaxis = dict(showgrid=True, gridcolor='lightgray'),
+        plot_bgcolor="white",  # Optional: Set background to white for a cleaner look
+    )
 
+    return fig
 
 # Callback to update the pie chart 
 @app.callback(
