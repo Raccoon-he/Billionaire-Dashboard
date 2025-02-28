@@ -6,7 +6,7 @@
 - We've completed a global map that shows the number of billionaires per country. It defaults to showing the total number of billionaires worldwide.
 - A pie chart illustrates the distribution of industries by the final wealth of billionaires.
 - A line graph displays the final wealth of billionaires across different age groups.
-- Clicking on a country on the map联动（interacts） with other charts to show relevant data for that country.
+- Clicking on a country on the map (interacts) with other charts to show relevant data for that country.
 
 ### Why some not yet implemented
 
