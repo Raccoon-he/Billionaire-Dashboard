@@ -44,317 +44,80 @@ top_company = df.groupby("source")["finalWorth"].sum().idxmax()
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # Define the layout using dbc.Container
-app.layout = dbc.Container(
-    [
-        # Main Heading and Tabs in the same row
-        dbc.Row(
-            [
-                # Title on the left
-                dbc.Col(
-                    [
-                        html.H1(
-                            "Billionaires Landscape",
-                            style={
-                                'color': '#FFD700',
-                                'backgroundColor': '#000000',
-                                'padding': '10px',
-                                'margin': '0'
-                            }
-                        )
-                    ],
-                    style={
-                        'display': 'flex',
-                        'alignItems': 'center'
-                    }
-                ),
-                # Tabs on the right
-                dbc.Col(
-                    [
-                        dcc.Tabs(
-                            id='tabs',
-                            value='tab-1',
-                            children=[
-                                dcc.Tab(
-                                    label='Overlook',
-                                    value='tab-1',
-                                    style={
-                                        'fontSize': '12px',
-                                        'borderRadius': '10px',
-                                        'width': '120px',
-                                        'height': '25px',
-                                        'backgroundColor': '#000000',
-                                        'color': '#FFD700',
-                                        'padding': '1px'
-                                    },
-                                    selected_style={
-                                        'fontSize': '12px',
-                                        'borderRadius': '10px',
-                                        'width': '120px',
-                                        'height': '25px',
-                                        'backgroundColor': '#000000',
-                                        'color': '#FFD700',
-                                        'padding': '1px'
-                                    }
-                                ),
-                                dcc.Tab(
-                                    label='More Info',
-                                    value='tab-2',
-                                    style={
-                                        'fontSize': '12px',
-                                        'borderRadius': '10px',
-                                        'width': '120px',
-                                        'height': '25px',
-                                        'backgroundColor': '#000000',
-                                        'color': '#FFD700',
-                                        'padding': '1px'
-                                    },
-                                    selected_style={
-                                        'fontSize': '12px',
-                                        'borderRadius': '10px',
-                                        'width': '120px',
-                                        'height': '25px',
-                                        'backgroundColor': '#000000',
-                                        'color': '#FFD700',
-                                        'padding': '1px'
-                                    }
-                                )
-                            ],
-                            style={
-                                'height': '50px',
-                                'marginTop': '10px'
-                            }
-                        )
-                    ],
-                    style={
-                        'display': 'flex',
-                        'justifyContent': 'flex-end',
-                        'alignItems': 'center'
-                    }
-                )
-            ],
-            style={
-                'backgroundColor': '#000000',
-                'padding': '10px',
-                'borderBottom': '2px solid #FFD700',
-                'marginTop': '0',
-                'textAlign': 'left'
-            }
-        ),
-        # Tab 1 Content: Summary and Map
-        html.Div(id='tab-content')
-    ],
-    fluid=True
-)
+app.layout = dbc.Container([
+    # Main Heading and Tabs in the same row
+    dbc.Row([
+        # Title on the left
+        dbc.Col([
+            html.H1("Billionaires Landscape", style={'color': '#FFD700', 'backgroundColor': '#000000', 'padding': '10px', 'margin': '0'})
+        ], style={'display': 'flex', 'alignItems': 'center'}),
+
+        # Tabs on the right
+        dbc.Col([
+            dcc.Tabs(id='tabs', value='tab-1', children=[
+                dcc.Tab(label='Overlook', value='tab-1', 
+                        style={'fontSize': '12px', 'borderRadius': '10px', 'width': '120px', 'height': '25px', 'backgroundColor': '#000000', 'color': '#FFD700', 'padding': '1px'}, 
+                        selected_style={'fontSize': '12px', 'borderRadius': '10px', 'width': '120px', 'height': '25px', 'backgroundColor': '#000000', 'color': '#FFD700', 'padding': '1px'}),
+                dcc.Tab(label='More Info', value='tab-2', 
+                        style={'fontSize': '12px', 'borderRadius': '10px', 'width': '120px', 'height': '25px', 'backgroundColor': '#000000', 'color': '#FFD700', 'padding': '1px'}, 
+                        selected_style={'fontSize': '12px', 'borderRadius': '10px', 'width': '120px', 'height': '25px', 'backgroundColor': '#000000', 'color': '#FFD700', 'padding': '1px'}),
+            ], style={'height': '50px', 'marginTop': '10px'})
+        ], style={'display': 'flex', 'justifyContent': 'flex-end', 'alignItems': 'center'})
+    ], style={'backgroundColor': '#000000', 'padding': '10px', 'borderBottom': '2px solid #FFD700', 'marginTop': '0', 'textAlign': 'left'}),
+
+    # Tab 1 Content: Summary and Map
+    html.Div(id='tab-content')
+], fluid=True)
 
 # Tab 1 Content: Summary and Map
-tab1_content = dbc.Container(
-    [
-        # Map and Key Statistics in the same row
-        dbc.Row(
-            [
-                # Map Column
-                dbc.Col(
-                    [
-                        dbc.Card(
-                            [
-                                # Move the content (Graph and Text) above the header
-                                html.Div(
-                                    id='billionaire-count-text',
-                                    style={
-                                        'fontSize': 20,
-                                        'textAlign': 'center',
-                                        'padding': '10px'
-                                    }
-                                ),
-                                dcc.Graph(
-                                    id='choropleth-map',
-                                    style={
-                                        'height': '100%',
-                                        'padding': '3px'
-                                    }
-                                ),
-                                # Move the header to the bottom
-                                dbc.CardHeader(
-                                    "Global Billionaire Distribution",
-                                    style={
-                                        'backgroundColor': '#000000',
-                                        'color': '#FFD700',
-                                        'fontWeight': 'bold',
-                                        'textAlign': 'center'
-                                    }
-                                )
-                            ],
-                            color="light"
-                        )
-                    ],
-                    style={
-                        'height': '100%'
-                    }
+tab1_content = dbc.Container([
+    # Map and Key Statistics in the same row
+    dbc.Row([
+        # Map Column
+        dbc.Col([
+            dbc.Card([
+                # Move the content (Graph and Text) above the header
+                html.Div(id='billionaire-count-text', style={'fontSize': 20, 'textAlign': 'center', 'padding': '10px'}),
+                dcc.Graph(
+                    id='choropleth-map',
+                    style={'height': '100%', 'padding': '3px'}
                 ),
-                # Key Statistics Column
-                dbc.Col(
-                    [
-                        # Top Row for Key Statistics
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    [
-                                        html.P(
-                                            "Richest Person",
-                                            style={
-                                                'color': '#D3D3D3',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '14px',
-                                                'textAlign': 'center'
-                                            }
-                                        ),
-                                        html.P(
-                                            f"Bernard Arnault & family ($211000B)",
-                                            style={
-                                                'color': '#FFD700',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '16px',
-                                                'textAlign': 'center'
-                                            }
-                                        )
-                                    ],
-                                    style={
-                                        'minHeight': '100px',
-                                        'textAlign': 'center'
-                                    }
-                                ),
-                                dbc.Col(
-                                    [
-                                        html.P(
-                                            "Youngest Billionaire",
-                                            style={
-                                                'color': '#D3D3D3',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '14px',
-                                                'textAlign': 'center'
-                                            }
-                                        ),
-                                        html.P(
-                                            f"Clemente Del Vecchio (18)",
-                                            style={
-                                                'color': '#FFD700',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '16px',
-                                                'textAlign': 'center'
-                                            }
-                                        )
-                                    ],
-                                    style={
-                                        'minHeight': '100px',
-                                        'textAlign': 'center'
-                                    }
-                                ),
-                                dbc.Col(
-                                    [
-                                        html.P(
-                                            "Oldest Billionaire",
-                                            style={
-                                                'color': '#D3D3D3',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '14px',
-                                                'textAlign': 'center'
-                                            }
-                                        ),
-                                        html.P(
-                                            f"George Joseph (101)",
-                                            style={
-                                                'color': '#FFD700',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '16px',
-                                                'textAlign': 'center'
-                                            }
-                                        )
-                                    ],
-                                    style={
-                                        'minHeight': '100px',
-                                        'textAlign': 'center'
-                                    }
-                                ),
-                                dbc.Col(
-                                    [
-                                        html.P(
-                                            "Top Industry",
-                                            style={
-                                                'color': '#D3D3D3',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '14px',
-                                                'textAlign': 'center'
-                                            }
-                                        ),
-                                        html.P(
-                                            f"Technology",
-                                            style={
-                                                'color': '#FFD700',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '16px',
-                                                'textAlign': 'center'
-                                            }
-                                        )
-                                    ],
-                                    style={
-                                        'minHeight': '100px',
-                                        'textAlign': 'center'
-                                    }
-                                ),
-                                dbc.Col(
-                                    [
-                                        html.P(
-                                            "Top Company",
-                                            style={
-                                                'color': '#D3D3D3',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '14px',
-                                                'textAlign': 'center'
-                                            }
-                                        ),
-                                        html.P(
-                                            f"Real estate",
-                                            style={
-                                                'color': '#FFD700',
-                                                'fontWeight': 'bold',
-                                                'fontSize': '16px',
-                                                'textAlign': 'center'
-                                            }
-                                        )
-                                    ],
-                                    style={
-                                        'minHeight': '100px',
-                                        'textAlign': 'center'
-                                    }
-                                )
-                            ],
-                            style={
-                                'backgroundColor': '#000000',
-                                'padding': '10px',
-                                'borderBottom': '2px solid #FFD700',
-                                'marginTop': '0',
-                                'display': 'flex',
-                                'flexDirection': 'column',
-                                'alignItems': 'flex-end'
-                            }
-                        )
-                    ],
-                    style={
-                        'height': '100%',
-                        'display': 'flex',
-                        'justifyContent': 'flex-end'
-                    }
-                )
-            ],
-            style={
-                'height': '100%',
-                'display': 'flex',
-                'justifyContent': 'flex-end'
-            }
-        )
-    ],
-    fluid=True
-)
+                # Move the header to the bottom
+                dbc.CardHeader("Global Billionaire Distribution", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}),
+            ], color="light")  # Add red border to the map card
+        ], style={'height': '100%'}),  # Map column width and height
+
+        # Key Statistics Column
+        dbc.Col([
+            dbc.Row([
+                dbc.Col([
+                    html.P("Richest Person", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
+                    html.P(f"Bernard Arnault & family ($211000B)", style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
+                ], style={'minHeight': '100px', 'textAlign': 'center'}),
+
+                dbc.Col([
+                    html.P("Youngest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
+                    html.P(f"Clemente Del Vecchio (18)", style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
+                ], style={'minHeight': '100px', 'textAlign': 'center'}),
+
+                dbc.Col([
+                    html.P("Oldest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
+                    html.P(f"George Joseph (101)", style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
+                ], style={'minHeight': '100px', 'textAlign': 'center'}),
+
+                dbc.Col([
+                    html.P("Top Industry", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
+                    html.P(f"Technology", style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
+                ], style={'minHeight': '100px', 'textAlign': 'center'}),
+
+                dbc.Col([
+                    html.P("Top Company", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
+                    html.P(f"Real estate", style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
+                ], style={'minHeight': '100px', 'textAlign': 'center'}),
+            ], style={'backgroundColor': '#000000', 'padding': '10px', 'borderBottom': '2px solid #FFD700', 'marginTop': '0', 'display': 'flex', 'flexDirection': 'column', 'alignItems': 'flex-end'}),
+        ], style={'height': '100%', 'display': 'flex', 'justifyContent': 'flex-end'}),  # Statistics column width and height
+    ], style={'alignItems': 'flex-start', 'border': '1px solid red'})  # Align items to the start
+], width=10, fluid=True)
 
 # Callback to switch between tabs
 @app.callback(
