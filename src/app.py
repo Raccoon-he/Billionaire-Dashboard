@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
@@ -6,7 +9,7 @@ import plotly.express as px
 import pandas as pd
 import pycountry
 import altair as alt
-
+import plotly.graph_objects as go
 
 # Load dataset
 df = pd.read_csv('./data/Billionaires_Statistics_Updated_Countrycoded.csv')
@@ -38,6 +41,32 @@ top_industry = df.groupby("industries")["finalWorth"].sum().idxmax()
 # Extract top company (by total finalWorth) using 'source' column
 top_company = df.groupby("source")["finalWorth"].sum().idxmax()
 
+# Color for industries
+industries_color = {
+    "Automotive": "blue",
+    "Construction & Engineering": "red",
+    "Diversified": "green",
+    "Energy": "purple",
+    "Fashion & Retail": "orange",
+    "Finance & Investments": "cyan",
+    "Food & Beverage": "pink",
+    "Gambling & Casinos": "brown",
+    "Healthcare": "gray",
+    "Logistics": "lightblue",
+    "Manufacturing": "darkgreen",
+    "Media & Entertainment": "darkred",
+    "Metals & Mining": "darkblue",
+    "Real Estate": "olive",
+    "Service": "teal",
+    "Sports": "magenta",
+    "Technology": "maroon",
+    "Telecom": "navy"
+}
+
+# color
+bg_color = "#000000"
+card_color = "#333333"
+text_color = "#FFD700"
 
 # Create Dash app with Bootstrap
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -69,46 +98,68 @@ def create_pie_chart(selected_df, title):
     
     return chart.to_html()  
 
- 
 # Define the layout using dbc.Container
 app.layout = dbc.Container([
-    # Main Heading
-    html.H1("Billionaires Landscape", style={'textAlign': 'center', 'color': '#FFD700', 'backgroundColor': '#000000', 'padding': '10px 0', 'margin': '0', 'width': '100%'}),
+    # Main Heading and Tabs in the same row
+    dbc.Row([
+        # Title on the left
+        dbc.Col([
+            html.H1("Billionaires Landscape", style={'color': '#FFD700', 'backgroundColor': '#000000', 'padding': '10px', 'margin': '0'})
+        ], style={'display': 'flex', 'alignItems': 'center'}),
 
+        # Tabs on the right
+        dbc.Col([
+            dcc.Tabs(id='tabs', value='tab-1', children=[
+                dcc.Tab(label='Overlook', value='tab-1', 
+                        style={'fontSize': '12px', 'borderRadius': '10px', 'width': '120px', 'height': '25px', 'backgroundColor': '#000000', 'color': '#FFD700', 'padding': '1px'}, 
+                        selected_style={'fontSize': '12px', 'borderRadius': '10px', 'width': '120px', 'height': '25px', 'backgroundColor': '#000000', 'color': '#FFD700', 'padding': '1px'}),
+                dcc.Tab(label='More Info', value='tab-2', 
+                        style={'fontSize': '12px', 'borderRadius': '10px', 'width': '120px', 'height': '25px', 'backgroundColor': '#000000', 'color': '#FFD700', 'padding': '1px'}, 
+                        selected_style={'fontSize': '12px', 'borderRadius': '10px', 'width': '120px', 'height': '25px', 'backgroundColor': '#000000', 'color': '#FFD700', 'padding': '1px'}),
+            ], style={'height': '50px', 'marginTop': '10px'})
+        ], style={'display': 'flex', 'justifyContent': 'flex-end', 'alignItems': 'center'})
+    ], style={'backgroundColor': '#000000', 'padding': '10px', 'borderBottom': '2px solid #FFD700', 'marginTop': '0'}),
+
+    # Tab Content
+    html.Div(id='tab-content')
+], fluid=True, style={"padding": "0px", "backgroundColor": bg_color})
+
+# Tab 1 Content: Summary and Map
+tab1_content = dbc.Container([
     # Top Row for Key Statistics
     dbc.Row([
         dbc.Col([
             html.P("Richest Person", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
             html.P(f"{richest_person['personName']} (${richest_person['finalWorth']}B)", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-        ], width=3),
+        ]),
 
         dbc.Col([
             html.P("Youngest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
             html.P(f"{youngest_billionaire['personName']} ({round(youngest_billionaire['age'])})", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-        ], width=2),
+        ]),
 
         dbc.Col([
             html.P("Oldest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
             html.P(f"{oldest_billionaire['personName']} ({round(oldest_billionaire['age'])})", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-        ], width=2),
+        ]),
 
         dbc.Col([
             html.P("Top Industry", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
             html.P(f"{top_industry}", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-        ], width=2),
+        ]),
 
         dbc.Col([
             html.P("Top Company", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center'}),
             html.P(f"{top_company}", 
                    style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-        ], width=2),
+        ]),
     ], justify="center", style={'backgroundColor': '#000000', 'padding': '10px', 'borderBottom': '2px solid #FFD700', 'marginTop': '0'}), 
 
-    # Main Dashboard Content
+    # Map
     dbc.Row([
         dbc.Col([
             dbc.Card([
@@ -119,37 +170,115 @@ app.layout = dbc.Container([
                 ),
                 html.Div(id='billionaire-count-text', style={'fontSize': 20, 'textAlign': 'center', 'padding': '10px'})
             ], color="light")
-        ], width=6),
-        
-        # line chart and pie chart
+        ])
+    ])
+], fluid=True, style={"padding": "0px", "backgroundColor": bg_color})
+
+# Tab 2 Content: Detailed Analysis
+tab2_content = dbc.Container([
+    dbc.Row([
+        # Filters column
         dbc.Col([
             dbc.Card([
-                dbc.CardHeader("Final Worth by Age", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
-                dcc.Dropdown(
-                    id='industry-dropdown',
-                    options=[{'label': ind, 'value': ind} for ind in df['industries'].unique()],
-                    value=[], 
-                    multi=True,
-                    style={'margin': '0'}
-                ),
-                dcc.Graph(
-                    id='line-chart',
-                    style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
-                )
-            ], color="light", style={'height': '35vh', 'padding': '0', 'margin': '0'}),
+                dbc.CardHeader("Filters", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                dbc.CardBody([
+                    dcc.Dropdown(
+                        id='country-dropdown',
+                        options=[{'label': cou, 'value': cou} for cou in df['countryOfCitizenship'].unique()],
+                        value=[],  # Default to all countries
+                        multi=True,
+                        placeholder="Select countries",
+                        style={'margin': '0', 'width': '100%'}
+                    ),
+                    dcc.Dropdown(
+                        id='industry-dropdown',
+                        options=[{'label': ind, 'value': ind} for ind in df['industries'].unique()],
+                        value=[],  # Default to all industries
+                        multi=True,
+                        placeholder="Select industries",
+                        style={'margin': '0', 'width': '100%'}
+                    )
+                ])
+            ], color="light", style={'height': '20vh', 'padding': '0', 'margin': '0'}),
+
+            # industries color legend
             dbc.Card([
-                dbc.CardHeader(
-                    "Industries by Final Worth",
-                    style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}
-                ),
-                html.Iframe(
-                    id='pie-chart',
-                    style={'border-width': '0', 'width': '100%', 'height': '300px'}  
-                )
-            ], color="light", style={'border': '2px solid #FFD700', 'margin': '0'})  
-        ], width=6),
-    ]),
-], fluid=True)
+                dbc.CardHeader("Legend", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                dbc.CardBody([
+                    html.Div(id='legend')
+                ])
+            ], color="light", style={'height': '70vh', 'padding': '0', 'margin': '0', 'width': '100%'})
+        ], width=3),
+
+        # right column
+        dbc.Col([
+            # line 1
+            dbc.Row([
+                dbc.Col(
+                    # scatter plot
+                    dbc.Card([
+                        dbc.CardHeader("Worth by Age", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                        dcc.Graph(
+                            id='scatter-chart',
+                            style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
+                        )
+                    ], color="light", style={'height': '35vh', 'padding': '0', 'margin': '0'})
+                , width=6),
+
+                # stacked bar chart
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardHeader("Count by Age and Gender", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                        dcc.Graph(
+                            id='stacked-bar-chart',
+                            style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
+                        )
+                    ], color="light", style={'height': '35vh', 'padding': '0', 'margin': '0'})
+                ], width=6)
+            ]),
+
+            # line 2
+            dbc.Row([
+                # pie chart
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardHeader(
+                            "Industries by Final Worth",
+                            style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}
+                        ),
+                        html.Iframe(
+                            id='pie-chart',
+                            style={'border-width': '0', 'width': '100%', 'height': '300px'}  
+                        )
+                    ], color="light", style={'border': '2px solid #FFD700', 'margin': '0'})  
+                ], width=6),
+
+                # Top 10 Companies Bar Chart
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardHeader("Top 10 Companies by Wealth", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}),
+                        dcc.Graph(
+                            id='top-companies-bar-chart',
+                            style={'height': '300px', 'padding': '3px'}
+                        )
+                    ], color="light")
+                ], width=6)
+            ])     
+        ])
+    ])
+], fluid=True, style={"padding": "0px", "backgroundColor": bg_color})
+
+
+# Callback to switch between tabs
+@app.callback(
+    Output('tab-content', 'children'),
+    Input('tabs', 'value')
+)
+def render_tab_content(tab):
+    if tab == 'tab-1':
+        return tab1_content
+    elif tab == 'tab-2':
+        return tab2_content
 
 # Callback to update the choropleth map
 @app.callback(
@@ -171,43 +300,53 @@ def update_map(clickData):
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     return fig
 
-# Callback to update the line chart based on the clicked country and selected industries
+# Callback to update the legend based on the selected industries
 @app.callback(
-    Output('line-chart', 'figure'),
-    [Input('choropleth-map', 'clickData'),
+    Output('legend', 'children'),
+    [Input('industry-dropdown', 'value')]
+)
+def update_legend(selected_industries):
+    legend_items = []
+    for industry, color in industries_color.items():
+        if selected_industries and industry not in selected_industries:
+            continue
+        legend_items.append(
+            html.Div([
+                html.Span(style={'color': color, 'fontSize': '16px', 'marginRight': '5px'}, children=industry),
+                html.Span(style={'backgroundColor': color, 'width': '20px', 'height': '10px', 'display': 'inline-block'})
+            ])
+        )
+    return legend_items
+
+# Callback to update the scatter chart based on the selected filters
+@app.callback(
+    Output('scatter-chart', 'figure'),
+    [Input('country-dropdown', 'value'),
      Input('industry-dropdown', 'value')]
 )
-def update_line_chart(clickData, selected_industries):
-    # Determine the dataframe to use based on clickData
-    if clickData is None:
-        # Default to global data
-        filtered_df = df
-    else:
-        # Extract the country code from the click data
-        country_code = clickData['points'][0]['location']
-        # Filter the dataframe to include only the selected country
-        filtered_df = df[df['country'] == country_code]
+def update_scatter_chart(selected_countries, selected_industries):
+    # Start with the full dataframe
+    filtered_df = df.copy()
 
-    # If industries are selected, further filter the dataframe
+    # Filter by selected countries if any are selected
+    if selected_countries:
+        filtered_df = filtered_df[filtered_df['countryOfCitizenship'].isin(selected_countries)]
+
+    # Filter by selected industries if any are selected
     if selected_industries:
         filtered_df = filtered_df[filtered_df['industries'].isin(selected_industries)]
-        # Group the filtered data by Age and industries, and calculate the sum of finalWorth
-        line_data = filtered_df.groupby(['Age', 'industries'])['finalWorth'].sum().reset_index()
-        # Create the line chart with multiple lines for each industry
-        fig = px.line(
-            line_data,
-            x='Age',
-            y='finalWorth',
-            color='industries'
-        )
-    else:
-        # Default view: sum of finalWorth by Age
-        line_data = filtered_df.groupby('Age')['finalWorth'].sum().reset_index()
-        fig = px.line(
-            line_data,
-            x='Age',
-            y='finalWorth'
-        )
+
+    # Prepare the data for the scatter plot
+    scatter_data = filtered_df.groupby(['age', 'industries'])['finalWorth'].sum().reset_index()
+
+    # Create the scatter plot
+    fig = px.scatter(
+        scatter_data,
+        x='age',
+        y='finalWorth',
+        color='industries',
+        color_discrete_map=industries_color,
+    )
 
     fig.update_layout(
         margin=dict(l=1, r=1, t=1, b=1),  # Remove internal margins
@@ -216,7 +355,42 @@ def update_line_chart(clickData, selected_industries):
         xaxis = dict(showgrid=True, gridcolor='lightgray'),
         yaxis = dict(showgrid=True, gridcolor='lightgray'),
         plot_bgcolor="white",  # Optional: Set background to white for a cleaner look
+        showlegend = False,
     )
+
+    return fig
+
+# Callback to update the stacked bar chart based on the selected filters
+@app.callback(
+    Output('stacked-bar-chart', 'figure'),
+    [Input('country-dropdown', 'value'),
+     Input('industry-dropdown', 'value')]
+)
+def update_stacked_bar_chart(selected_countries, selected_industries):
+    # Start with the full dataframe
+    filtered_df = df.copy()
+
+    # Filter by selected countries if any are selected
+    if selected_countries:
+        filtered_df = filtered_df[filtered_df['country'].isin(selected_countries)]
+
+    # Filter by selected industries if any are selected
+    if selected_industries:
+        filtered_df = filtered_df[filtered_df['industries'].isin(selected_industries)]
+
+    # Prepare the data for the stacked bar chart
+    stacked_bar_data = filtered_df.groupby(['Age', 'gender']).size().unstack(fill_value=0).reset_index()
+
+    # Create the stacked bar chart
+    fig = px.bar(
+        stacked_bar_data,
+        x='Age',
+        y=['M', 'F'],
+        color_discrete_sequence=['blue', 'pink']
+    )
+
+    # Update the layout
+    fig.update_layout(barmode='stack')
 
     return fig
 
@@ -241,7 +415,6 @@ def update_pie_chart(clickData):
     # No need to filter for top 5; show all industries
     return create_pie_chart(filtered_df, title)
 
-
 # Callback to update the text component with billionaire count
 @app.callback(
     Output('billionaire-count-text', 'children'),
@@ -260,6 +433,51 @@ def update_billionaire_count_text(clickData):
             print(f"Error processing country code {country_code}: {e}")
     # Default to global billionaire count
     return f"Global Billionaires: {global_billionaire_count}"
+
+# Callback to update the top 10 companies bar chart
+@app.callback(
+    Output('top-companies-bar-chart', 'figure'),
+    Input('choropleth-map', 'clickData')
+)
+def update_top_companies_bar_chart(clickData):
+    # Determine the dataframe to use based on clickData
+    if clickData is None:
+        # Default to global data
+        filtered_df = df
+    else:
+        # Extract the country code from the click data
+        country_code = clickData['points'][0]['location']
+        # Filter the dataframe to include only the selected country
+        filtered_df = df[df['country'] == country_code]
+
+    # Group by company and sum their finalWorth
+    top_companies = filtered_df.groupby('source')['finalWorth'].sum().reset_index()
+    # Sort by finalWorth and get the top 10
+    top_companies = top_companies.sort_values(by='finalWorth', ascending=False).head(10)
+
+    # Merge with the original dataframe to get the industry information
+    top_companies = top_companies.merge(df[['source', 'industries']].drop_duplicates(), on='source', how='left')
+
+    # Create the bar chart
+    fig = px.bar(
+        top_companies,
+        x='finalWorth',
+        y='source',
+        color='industries',
+        orientation='h',
+        labels={'finalWorth': 'Wealth (B$)', 'source': 'Company'},
+        title='Top 10 Companies by Wealth'
+    )
+
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=30, b=0),
+        xaxis=dict(title='Wealth (B$)'),
+        yaxis=dict(title='Company'),
+        plot_bgcolor='white',
+        height=400
+    )
+
+    return fig
 
 # Run the app
 if __name__ == '__main__':
