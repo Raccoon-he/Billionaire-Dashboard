@@ -21,7 +21,10 @@ billionaires_count = df.groupby('country').size().reset_index(name='billionaire_
 global_billionaire_count = billionaires_count['billionaire_count'].sum()
 
 # Calculate average finalWorth by age and industries
-df['Age'] = (df['age'] // 10) * 10
+df['age_group'] = (df['age'] // 10) * 10
+
+# gender process
+df['gender'] = df['gender'].replace({'M': 'Male', 'F': 'Female'})
 
 # Prepare data for the Altair pie chart
 df_pie = df.groupby(["country", "industries"], as_index=False)["finalWorth"].sum()
@@ -43,24 +46,24 @@ top_company = df.groupby("source")["finalWorth"].sum().idxmax()
 
 # Color for industries
 industries_color = {
-    "Automotive": "blue",
-    "Construction & Engineering": "red",
-    "Diversified": "green",
-    "Energy": "purple",
-    "Fashion & Retail": "orange",
-    "Finance & Investments": "cyan",
-    "Food & Beverage": "pink",
-    "Gambling & Casinos": "brown",
-    "Healthcare": "gray",
-    "Logistics": "lightblue",
-    "Manufacturing": "darkgreen",
-    "Media & Entertainment": "darkred",
-    "Metals & Mining": "darkblue",
-    "Real Estate": "olive",
-    "Service": "teal",
-    "Sports": "magenta",
-    "Technology": "maroon",
-    "Telecom": "navy"
+    "Automotive": "#FFFF00",
+    "Construction & Engineering": "#FFC0CB",
+    "Diversified": "#00FF00",
+    "Energy": "#00FFFF",
+    "Fashion & Retail": "#FFA500",
+    "Finance & Investments": "#FF00FF",
+    "Food & Beverage": "#FFFFFF",
+    "Gambling & Casinos": "#FF0000",
+    "Healthcare": "#00FFFF",
+    "Logistics": "#FFD700",
+    "Manufacturing": "#C0C0C0",
+    "Media & Entertainment": "#00FF80",
+    "Metals & Mining": "#B2FFFC",
+    "Real Estate": "#FF7F50",
+    "Service": "#87CEEB",
+    "Sports": "#FFFF33",
+    "Technology":"#FFDAB9",
+    "Telecom": "#E6E6FA"
 }
 
 # color
@@ -180,7 +183,7 @@ tab2_content = dbc.Container([
         # Filters column
         dbc.Col([
             dbc.Card([
-                dbc.CardHeader("Filters", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                dbc.CardHeader("Filters", style={'backgroundColor': bg_color, 'color': text_color, 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
                 dbc.CardBody([
                     dcc.Dropdown(
                         id='country-dropdown',
@@ -190,6 +193,7 @@ tab2_content = dbc.Container([
                         placeholder="Select countries",
                         style={'margin': '0', 'width': '100%'}
                     ),
+                    html.Br(),
                     dcc.Dropdown(
                         id='industry-dropdown',
                         options=[{'label': ind, 'value': ind} for ind in df['industries'].unique()],
@@ -197,17 +201,21 @@ tab2_content = dbc.Container([
                         multi=True,
                         placeholder="Select industries",
                         style={'margin': '0', 'width': '100%'}
+                    ),
+                    html.P(
+                        "Default: Global & All Industries",
+                        style={'color': '#cccccc', 'marginTop': '8px'}
                     )
                 ])
-            ], color="light", style={'height': '20vh', 'padding': '0', 'margin': '0'}),
+            ], style={"backgroundColor": bg_color, 'height': '23vh', 'padding': '0', 'margin': '0'}),
 
             # industries color legend
             dbc.Card([
-                dbc.CardHeader("Legend", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                dbc.CardHeader("Legend", style={'backgroundColor': bg_color, 'color': text_color, 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
                 dbc.CardBody([
                     html.Div(id='legend')
                 ])
-            ], color="light", style={'height': '70vh', 'padding': '0', 'margin': '0', 'width': '100%'})
+            ], style={"backgroundColor": bg_color, 'height': '67vh', 'padding': '0', 'margin': '0', 'width': '100%'})
         ], width=3),
 
         # right column
@@ -217,23 +225,23 @@ tab2_content = dbc.Container([
                 dbc.Col(
                     # scatter plot
                     dbc.Card([
-                        dbc.CardHeader("Worth by Age", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                        dbc.CardHeader("Wealth Distribution Across Different Ages", style={'backgroundColor': bg_color, 'color': text_color, 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
                         dcc.Graph(
                             id='scatter-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
-                    ], color="light", style={'height': '35vh', 'padding': '0', 'margin': '0'})
+                    ], style={"backgroundColor": bg_color, 'height': '45vh', 'padding': '0', 'margin': '0'})
                 , width=6),
 
                 # stacked bar chart
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardHeader("Count by Age and Gender", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                        dbc.CardHeader("Comparison of Male and Female Counts Across Ages", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
                         dcc.Graph(
                             id='stacked-bar-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
-                    ], color="light", style={'height': '35vh', 'padding': '0', 'margin': '0'})
+                    ], style={"backgroundColor": bg_color, 'height': '45vh', 'padding': '0', 'margin': '0'})
                 ], width=6)
             ]),
 
@@ -312,8 +320,8 @@ def update_legend(selected_industries):
             continue
         legend_items.append(
             html.Div([
-                html.Span(style={'color': color, 'fontSize': '16px', 'marginRight': '5px'}, children=industry),
-                html.Span(style={'backgroundColor': color, 'width': '20px', 'height': '10px', 'display': 'inline-block'})
+                html.Span(style={'backgroundColor': color, 'width': '20px', 'height': '10px', 'display': 'inline-block', 'margin-right': '15px', 'margin-left': '15px'}),
+                html.Span(style={'color': color, 'fontSize': '16px', 'marginRight': '5px'}, children=industry)
             ])
         )
     return legend_items
@@ -346,15 +354,16 @@ def update_scatter_chart(selected_countries, selected_industries):
         y='finalWorth',
         color='industries',
         color_discrete_map=industries_color,
+        size_max=8
     )
 
     fig.update_layout(
         margin=dict(l=1, r=1, t=1, b=1),  # Remove internal margins
         autosize=True,  # Allow dynamic resizing
-        height=200,  # Adjust height dynamically (optional)
-        xaxis = dict(showgrid=True, gridcolor='lightgray'),
-        yaxis = dict(showgrid=True, gridcolor='lightgray'),
-        plot_bgcolor="white",  # Optional: Set background to white for a cleaner look
+        xaxis = dict(title='Age', color='white', showgrid=True, gridcolor='#cccccc'),
+        yaxis = dict(title='Total Wealth (B)', color='white', showgrid=True, gridcolor='#cccccc'),
+        plot_bgcolor=bg_color,
+        paper_bgcolor=bg_color,
         showlegend = False,
     )
 
@@ -372,25 +381,42 @@ def update_stacked_bar_chart(selected_countries, selected_industries):
 
     # Filter by selected countries if any are selected
     if selected_countries:
-        filtered_df = filtered_df[filtered_df['country'].isin(selected_countries)]
+        filtered_df = filtered_df[filtered_df['countryOfCitizenship'].isin(selected_countries)]
 
     # Filter by selected industries if any are selected
     if selected_industries:
         filtered_df = filtered_df[filtered_df['industries'].isin(selected_industries)]
 
     # Prepare the data for the stacked bar chart
-    stacked_bar_data = filtered_df.groupby(['Age', 'gender']).size().unstack(fill_value=0).reset_index()
+    stacked_bar_data = filtered_df.groupby(['age_group', 'gender']).size().unstack(fill_value=0).reset_index()
 
     # Create the stacked bar chart
     fig = px.bar(
         stacked_bar_data,
-        x='Age',
-        y=['M', 'F'],
-        color_discrete_sequence=['blue', 'pink']
+        x='age_group',
+        y=['Male', 'Female'],
+        color_discrete_sequence=['#87CEEB', 'pink'],
     )
 
     # Update the layout
-    fig.update_layout(barmode='stack')
+    fig.update_layout(
+        margin=dict(l=1, r=1, t=1, b=1),  # Remove internal margins
+        autosize=True,  # Allow dynamic resizing
+        xaxis = dict(title='Age', color='white', showgrid=True, gridcolor='#cccccc'),
+        yaxis = dict(title='Count', color='white', showgrid=True, gridcolor='#cccccc'),
+        barmode='stack',
+        plot_bgcolor=bg_color,
+        paper_bgcolor=bg_color,
+        legend=dict(  
+            orientation="h",  # Horizontal orientation
+            yanchor="bottom", 
+            y=0.9,  
+            xanchor="left",  
+            x=0.01,  
+            font=dict(color='white'),
+            title_text="" 
+        )
+    )
 
     return fig
 
