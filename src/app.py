@@ -12,7 +12,7 @@ import altair as alt
 import plotly.graph_objects as go
 
 # Load dataset
-df = pd.read_csv('./data/Billionaires_Statistics_Updated_Countrycoded.csv')
+df = pd.read_csv('../data/Billionaires_Statistics_Updated_Countrycoded.csv')
 
 # Group by country and count billionaires
 billionaires_count = df.groupby('country').size().reset_index(name='billionaire_count')
