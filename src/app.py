@@ -74,32 +74,86 @@ text_color = "#FFD700"
 # Create Dash app with Bootstrap
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Function to create Altair Pie Chart
-def create_pie_chart(selected_df, title):
-    # Compute total wealth to calculate industry percentage
-    total_wealth = selected_df["finalWorth"].sum()
-    selected_df = selected_df.assign(percentage=(selected_df["finalWorth"] / total_wealth) * 100)
-
-    # Sort industries by finalWorth (optional, makes visualization clearer)
-    selected_df = selected_df.sort_values(by="finalWorth", ascending=False)
-
-    # Create Altair Pie Chart
-    chart = (
-        alt.Chart(selected_df)
-        .mark_arc()
-        .encode(
-            theta="finalWorth:Q",
-            color=alt.Color("industries:N", legend=alt.Legend(title="Industries")),  # Industry colors
-            tooltip=[
-                alt.Tooltip("industries:N", title="Industry"),
-                alt.Tooltip("finalWorth:Q", format=".2f", title="Final Worth (B$)"),
-                alt.Tooltip("percentage:Q", format=".2f", title="Percentage (%)") 
-            ],
-        )
-        .properties(title=title)
-    )
+# Define the pie chart
+def create_pie_chart(selected_df):
+    # Group data by industries and compute total wealth per industry
+    selected_df = selected_df.groupby("industries", as_index=False)["finalWorth"].sum()
     
-    return chart.to_html()  
+    # Compute industry-wise wealth percentage
+    total_wealth = selected_df["finalWorth"].sum()
+    selected_df["percentage"] = (selected_df["finalWorth"] / total_wealth) * 100
+
+    # Sort industries by wealth and keep only the Top 3 for labeling
+    selected_df = selected_df.sort_values(by="finalWorth", ascending=False)
+    top_3_industries = selected_df.iloc[:3]["industries"].tolist()  # Get top 3 industry names
+
+    # Create Plotly Pie Chart
+    fig = px.pie(
+        selected_df, 
+        names="industries", 
+        values="finalWorth", 
+        color="industries",
+        color_discrete_map=industries_color,  
+        hover_data=["finalWorth", "percentage"]
+    )
+
+    # Remove the title and legend
+    fig.update_layout(title_text=None)
+    fig.update_layout(showlegend=False)
+
+    # Modify text labels to show only for the top 3 industries
+    fig.update_traces(
+        textinfo="none",  # Hide all labels by default
+        textposition="inside",
+        insidetextorientation="radial",
+        hovertemplate="<b>%{label}</b><br>Wealth: %{value:.2f}B$<br>Percentage: %{customdata[1]:.2f}%"
+    )
+
+    # Show labels only for the top 3 industries
+    text_template = [
+        "%{label}<br>%{percent:.1%}" if industry in top_3_industries else ""
+        for industry in selected_df["industries"]
+    ]
+
+    fig.update_traces(texttemplate=text_template)
+
+    # Remove the black border around slices
+    fig.update_traces(marker=dict(line=dict(width=0))) 
+
+    # Update layout to match dark theme
+    fig.update_layout(
+        margin=dict(l=1, r=1, t=10, b=1),  # Reduce top margin since there's no title
+        autosize=True,  
+        plot_bgcolor=bg_color, 
+        paper_bgcolor=bg_color,  
+        font=dict(color=text_color),
+    )
+
+    return fig
+
+
+# Define the pie chart place holder 
+def create_placeholder_pie_chart():
+    fig = go.Figure()
+
+    # Add a "No Data Available" annotation
+    fig.add_annotation(
+        text="No Data Available",
+        x=0.5, y=0.5,
+        font=dict(size=18, color=text_color),
+        showarrow=False
+    )
+
+    # Set background color and layout
+    fig.update_layout(
+        title="Industries by Wealth",
+        plot_bgcolor=bg_color,
+        paper_bgcolor=bg_color,
+        font=dict(color=text_color),
+    )
+
+    return fig
+
 
 # Define the layout using dbc.Container
 app.layout = dbc.Container([
@@ -251,14 +305,14 @@ tab2_content = dbc.Container([
                 dbc.Col([
                     dbc.Card([
                         dbc.CardHeader(
-                            "Industries by Final Worth",
+                            "Industry Proportions by Wealth",
                             style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}
                         ),
-                        html.Iframe(
+                        dcc.Graph(
                             id='pie-chart',
-                            style={'border-width': '0', 'width': '100%', 'height': '300px'}  
-                        )
-                    ], color="light", style={'border': '2px solid #FFD700', 'margin': '0'})  
+                            style={'height': '300px', 'width': '100%'}
+                        )  
+                    ], style={"backgroundColor": bg_color, 'height': '45vh', 'padding': '0', 'margin': '0'})  
                 ], width=6),
 
                 # Top 10 Companies Bar Chart
@@ -269,7 +323,7 @@ tab2_content = dbc.Container([
                             id='top-companies-bar-chart',
                             style={'height': '300px', 'padding': '3px'}
                         )
-                    ], color="light")
+                    ], style={"backgroundColor": bg_color, 'height': '45vh', 'padding': '0', 'margin': '0'})
                 ], width=6)
             ])     
         ])
@@ -420,26 +474,31 @@ def update_stacked_bar_chart(selected_countries, selected_industries):
 
     return fig
 
-# Callback to update the pie chart 
+# Callback to update the pie chart based on the selected filters
 @app.callback(
-    Output('pie-chart', 'srcDoc'),  # Output the updated pie chart HTML
-    Input('choropleth-map', 'clickData')  # Clicked country from the map
+    Output('pie-chart', 'figure'),  
+    [Input('country-dropdown', 'value'),
+     Input('industry-dropdown', 'value')]
 )
-def update_pie_chart(clickData):
-    # Determine the dataset to use based on clickData
-    if clickData is None:
-        # Default to global data (All industries globally)
-        filtered_df = df_pie.groupby("industries", as_index=False)["finalWorth"].sum()
-        title = "Global Industry Distribution by Final Worth"
-    else:
-        # Extract the country code from the click data
-        country_code = clickData['points'][0]['location']
-        # Filter the dataset to include only the selected country
-        filtered_df = df_pie[df_pie['country'] == country_code]
-        title = f"Industry Distribution by Final Worth in {pycountry.countries.get(alpha_3=country_code).name}"
+def update_pie_chart(selected_countries, selected_industries):
+    # Start with the full dataframe
+    filtered_df = df.copy()
 
-    # No need to filter for top 5; show all industries
-    return create_pie_chart(filtered_df, title)
+    # Filter by selected countries if any are selected
+    if selected_countries:
+        filtered_df = filtered_df[filtered_df['countryOfCitizenship'].isin(selected_countries)]
+
+    # Filter by selected industries if any are selected
+    if selected_industries:
+        filtered_df = filtered_df[filtered_df['industries'].isin(selected_industries)]
+
+    # Handle the case when no data is available after filtering
+    if filtered_df.empty:
+        return create_placeholder_pie_chart()  # Return a placeholder pie chart
+
+    # Generate the pie chart using Plotly
+    return create_pie_chart(filtered_df)
+
 
 # Callback to update the text component with billionaire count
 @app.callback(
