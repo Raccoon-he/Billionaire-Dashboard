@@ -261,7 +261,7 @@ tab2_content = dbc.Container([
                         style={'color': '#cccccc', 'marginTop': '8px'}
                     )
                 ])
-            ], style={"backgroundColor": bg_color, 'height': '23vh', 'padding': '0', 'margin': '0'}),
+            ], style={"backgroundColor": bg_color, 'height': '186px', 'padding': '0', 'margin': '0'}),
 
             # industries color legend
             dbc.Card([
@@ -269,7 +269,7 @@ tab2_content = dbc.Container([
                 dbc.CardBody([
                     html.Div(id='legend')
                 ])
-            ], style={"backgroundColor": bg_color, 'height': '67vh', 'padding': '0', 'margin': '0', 'width': '100%'})
+            ], style={"backgroundColor": bg_color, 'height': '480px', 'padding': '0', 'margin': '0', 'width': '100%'})
         ], width=3),
 
         # right column
@@ -284,7 +284,7 @@ tab2_content = dbc.Container([
                             id='scatter-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
-                    ], style={"backgroundColor": bg_color, 'height': '45vh', 'padding': '0', 'margin': '0'})
+                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})
                 , width=6),
 
                 # stacked bar chart
@@ -295,7 +295,7 @@ tab2_content = dbc.Container([
                             id='stacked-bar-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
-                    ], style={"backgroundColor": bg_color, 'height': '45vh', 'padding': '0', 'margin': '0'})
+                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})
                 ], width=6)
             ]),
 
@@ -310,9 +310,9 @@ tab2_content = dbc.Container([
                         ),
                         dcc.Graph(
                             id='pie-chart',
-                            style={'height': '300px', 'width': '100%'}
+                            style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )  
-                    ], style={"backgroundColor": bg_color, 'height': '45vh', 'padding': '0', 'margin': '0'})  
+                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})  
                 ], width=6),
 
                 # Top 10 Companies Bar Chart
@@ -321,9 +321,9 @@ tab2_content = dbc.Container([
                         dbc.CardHeader("Top 10 Companies by Wealth", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}),
                         dcc.Graph(
                             id='top-companies-bar-chart',
-                            style={'height': '300px', 'padding': '3px'}
+                            style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
-                    ], style={"backgroundColor": bg_color, 'height': '45vh', 'padding': '0', 'margin': '0'})
+                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})
                 ], width=6)
             ])     
         ])
