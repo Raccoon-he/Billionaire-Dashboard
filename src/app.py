@@ -74,87 +74,6 @@ text_color = "#FFD700"
 # Create Dash app with Bootstrap
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Define the pie chart
-def create_pie_chart(selected_df):
-    # Group data by industries and compute total wealth per industry
-    selected_df = selected_df.groupby("industries", as_index=False)["finalWorth"].sum()
-    
-    # Compute industry-wise wealth percentage
-    total_wealth = selected_df["finalWorth"].sum()
-    selected_df["percentage"] = (selected_df["finalWorth"] / total_wealth) * 100
-
-    # Sort industries by wealth and keep only the Top 3 for labeling
-    selected_df = selected_df.sort_values(by="finalWorth", ascending=False)
-    top_3_industries = selected_df.iloc[:3]["industries"].tolist()  # Get top 3 industry names
-
-    # Create Plotly Pie Chart
-    fig = px.pie(
-        selected_df, 
-        names="industries", 
-        values="finalWorth", 
-        color="industries",
-        color_discrete_map=industries_color,  
-        hover_data=["finalWorth", "percentage"]
-    )
-
-    # Remove the title and legend
-    fig.update_layout(title_text=None)
-    fig.update_layout(showlegend=False)
-
-    # Modify text labels to show only for the top 3 industries
-    fig.update_traces(
-        textinfo="none",  # Hide all labels by default
-        textposition="inside",
-        insidetextorientation="radial",
-        hovertemplate="<b>%{label}</b><br>Wealth: %{value:.2f}B$<br>Percentage: %{customdata[1]:.2f}%"
-    )
-
-    # Show labels only for the top 3 industries
-    text_template = [
-        "%{label}<br>%{percent:.1%}" if industry in top_3_industries else ""
-        for industry in selected_df["industries"]
-    ]
-
-    fig.update_traces(texttemplate=text_template)
-
-    # Remove the black border around slices
-    fig.update_traces(marker=dict(line=dict(width=0))) 
-
-    # Update layout to match dark theme
-    fig.update_layout(
-        margin=dict(l=1, r=1, t=10, b=1),  # Reduce top margin since there's no title
-        autosize=True,  
-        plot_bgcolor=bg_color, 
-        paper_bgcolor=bg_color,  
-        font=dict(color=text_color),
-    )
-
-    return fig
-
-
-# Define the pie chart place holder 
-def create_placeholder_pie_chart():
-    fig = go.Figure()
-
-    # Add a "No Data Available" annotation
-    fig.add_annotation(
-        text="No Data Available",
-        x=0.5, y=0.5,
-        font=dict(size=18, color=text_color),
-        showarrow=False
-    )
-
-    # Set background color and layout
-    fig.update_layout(
-        title="Industries by Wealth",
-        plot_bgcolor=bg_color,
-        paper_bgcolor=bg_color,
-        font=dict(color=text_color),
-    )
-
-    return fig
-
-
 # Define the layout using dbc.Container
 app.layout = dbc.Container([
     # Main Heading and Tabs in the same row
@@ -318,9 +237,9 @@ tab2_content = dbc.Container([
                 # Top 10 Companies Bar Chart
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardHeader("Top 10 Companies by Wealth", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}),
+                        dbc.CardHeader("Top 10 Sources by Wealth", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}),
                         dcc.Graph(
-                            id='top-companies-bar-chart',
+                            id='top-sources-bar-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
                     ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})
@@ -494,10 +413,122 @@ def update_pie_chart(selected_countries, selected_industries):
 
     # Handle the case when no data is available after filtering
     if filtered_df.empty:
-        return create_placeholder_pie_chart()  # Return a placeholder pie chart
+        fig = go.Figure()
+        fig.update_layout(
+            plot_bgcolor=bg_color,
+            paper_bgcolor=bg_color,
+            font=dict(color=text_color),
+            margin=dict(l=1, r=1, t=10, b=1)
+        )
+        return fig
 
-    # Generate the pie chart using Plotly
-    return create_pie_chart(filtered_df)
+    # Group data by industries and compute total wealth per industry
+    selected_df = filtered_df.groupby("industries", as_index=False)["finalWorth"].sum()
+    
+    # Compute industry-wise wealth percentage
+    total_wealth = selected_df["finalWorth"].sum()
+    selected_df["percentage"] = (selected_df["finalWorth"] / total_wealth) * 100
+
+    # Sort industries by wealth and keep only the Top 3 for labeling
+    selected_df = selected_df.sort_values(by="finalWorth", ascending=False)
+    top_3_industries = selected_df.iloc[:3]["industries"].tolist()
+
+    # Create Plotly Pie Chart
+    fig = px.pie(
+        selected_df, 
+        names="industries", 
+        values="finalWorth", 
+        color="industries",
+        color_discrete_map=industries_color,  
+        hover_data=["finalWorth", "percentage"]
+    )
+
+    # Remove the title and legend
+    fig.update_layout(title_text=None, showlegend=False)
+
+    # Modify text labels to show only for the top 3 industries
+    fig.update_traces(
+        textinfo="none",  # Hide all labels by default
+        textposition="inside",
+        insidetextorientation="radial",
+        hovertemplate="<b>%{label}</b><br>Wealth: %{value:.2f}B$<br>Percentage: %{customdata[1]:.2f}%"
+    )
+
+    # Show labels only for the top 3 industries
+    text_template = [
+        "%{label}<br>%{percent:.1%}" if industry in top_3_industries else ""
+        for industry in selected_df["industries"]
+    ]
+
+    fig.update_traces(texttemplate=text_template)
+
+    # Remove the black border around slices
+    fig.update_traces(marker=dict(line=dict(width=0))) 
+
+    # Update layout to match dark theme
+    fig.update_layout(
+        margin=dict(l=1, r=1, t=10, b=1),
+        autosize=True,  
+        plot_bgcolor=bg_color, 
+        paper_bgcolor=bg_color,  
+        font=dict(color=text_color),
+    )
+
+    return fig
+
+
+# Callback to update the top 10 sources bar chart based on the selected filters
+@app.callback(
+    Output('top-sources-bar-chart', 'figure'),
+    [Input('country-dropdown', 'value'),
+     Input('industry-dropdown', 'value')]
+)
+def update_top_sources_bar_chart(selected_countries, selected_industries):
+    # Start with the full dataframe
+    filtered_df = df.copy()
+
+    # Default: Show global top 10 sources if no filters are selected
+    if selected_countries:
+        filtered_df = filtered_df[filtered_df['countryOfCitizenship'].isin(selected_countries)]
+    
+    if selected_industries:
+        filtered_df = filtered_df[filtered_df['industries'].isin(selected_industries)]
+    
+    # Group by source and industry, summing finalWorth
+    top_sources = filtered_df.groupby(['source', 'industries'], as_index=False)['finalWorth'].sum()
+    
+    # Compute total wealth for each source across industries
+    total_wealth_per_source = top_sources.groupby('source', as_index=False)['finalWorth'].sum()
+    
+    # Get the top 10 sources based on total wealth
+    top_sources_list = total_wealth_per_source.sort_values(by='finalWorth', ascending=False).head(10)['source']
+    
+    # Filter the dataset to only include the top 10 sources
+    top_sources = top_sources[top_sources['source'].isin(top_sources_list)]
+
+    # Create the horizontal bar chart
+    fig = px.bar(
+        top_sources,
+        x='finalWorth',
+        y='source',
+        color='industries',  # Assign colors based on industry
+        color_discrete_map=industries_color,
+        orientation='h',
+        labels={'finalWorth': 'Wealth (B$)', 'source': 'Source'}
+    )
+
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        xaxis=dict(title='Wealth (B$)', color='white', showgrid=True, gridcolor='#cccccc'),
+        yaxis=dict(title='Source', color='white', categoryorder='total ascending'),  # Ensure sorting by total wealth
+        plot_bgcolor=bg_color,
+        paper_bgcolor=bg_color,
+        height=400,
+        showlegend=False,  # Remove legend
+        title_text=None  # Remove plot title
+    )
+
+    return fig
 
 
 # Callback to update the text component with billionaire count
