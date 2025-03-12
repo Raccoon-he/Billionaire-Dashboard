@@ -76,7 +76,7 @@ tab1_content = dbc.Container([
                 dbc.CardHeader("Global Billionaire Distribution", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}),
             ], style={'padding':'0px','width': '100%', 'height':'100%', 'overflow': 'hidden', 'backgroundColor': '#000000'})  # Ensure Card width fills parent container and hide overflow
         ], 
-        style={'padding':'0px', 'flex':'5', 'flexDirection': 'column', 'justifyContent': 'flex-end', 'alignItems': 'flex-start', 'overflow': 'hidden', 'border': '2px solid yellow'}),  # Set Map column width ratio and hide overflow
+        style={'padding':'0px', 'flex':'5', 'flexDirection': 'column', 'justifyContent': 'flex-end', 'alignItems': 'flex-start', 'overflow': 'hidden', 'border': '2px solid #FFD700'}),  # Set Map column width ratio and hide overflow
 
         # Key Statistics Column
         dbc.Col([
@@ -129,10 +129,10 @@ tab1_content = dbc.Container([
             ],style={'height':'100%','backgroundColor': '#000000', 'padding': '10px', 'borderBottom': '2px solid #FFD700', 'marginTop': '0', 'display': 'flex', 'flexDirection': 'column', 'alignItems': 'flex-end', 'overflow': 'hidden'}),  # Hide overflow content
         ], 
         # col:metrics
-        style={'flex':'1', 'border':'1px solid red', 'height': '100%', 'flex': '1',  'overflow': 'hidden'})  # Set Statistics column width ratio and hide overflow
+        style={'flex':'1', 'height': '100%', 'flex': '1',  'overflow': 'hidden'})  # Set Statistics column width ratio and hide overflow
     ], 
     # row: map+metrics
-    style={'border':'1px solid black','width':'100%','height':'666px','alignItems': 'stretch', 'margin': '0px','display': 'flex', 'justifyContent': 'flex-between', 'overflow': 'hidden'})  # Ensure Row layout is reasonable and hide overflow
+    style={'width':'100%','height':'560px','alignItems': 'stretch', 'margin': '0px','display': 'flex', 'justifyContent': 'flex-between', 'overflow': 'hidden'})  # Ensure Row layout is reasonable and hide overflow
 ], fluid=True, style={'marginLeft': '0px', 'padding': '0px', 'overflow': 'hidden'})  # Ensure inner Container margin and padding are consistent and hide overflow
 
 # Callback to switch between tabs
@@ -321,7 +321,7 @@ def update_billionaire_count_text(clickData, n_clicks):
 
     # If "Back to Global" button is clicked
     if trigger_id == 'select-all-button':
-        return f"Global Billionaires: {global_billionaire_count}"
+        return f"Global Billionaires Count: {global_billionaire_count}"
 
     # If a country is clicked
     if clickData:
@@ -341,18 +341,18 @@ def update_billionaire_count_text(clickData, n_clicks):
                     billionaire_count = billionaires_count[billionaires_count['country'] == country_code]['billionaire_count'].values[0]
                     
                     # Return the result
-                    return f"Selected Country: {country_name} | Billionaires: {billionaire_count}"
+                    return f"Selected Country: {country_name} | Billionaires Count: {billionaire_count}"
                 else:
                     return f"Country not found for code: {country_code}"
             else:
                 # If customdata is invalid, display global billionaire count
-                return f"Global Billionaires: {global_billionaire_count}"
+                return f"Global Billionaires Count: {global_billionaire_count}"
         except Exception as e:
             # Print error message
-            return f"Global Billionaires: {global_billionaire_count}"
+            return f"Global Billionaires Count: {global_billionaire_count}"
     
     # If no click data, display global billionaire count
-    return f"Global Billionaires: {global_billionaire_count}"
+    return f"Global Billionaires Count: {global_billionaire_count}"
 
 # Run the app
 if __name__ == '__main__':
