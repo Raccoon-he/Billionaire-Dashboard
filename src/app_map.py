@@ -132,7 +132,7 @@ tab1_content = dbc.Container([
         style={'flex':'1', 'border':'1px solid red', 'height': '100%', 'flex': '1',  'overflow': 'hidden'})  # Set Statistics column width ratio and hide overflow
     ], 
     # row: map+metrics
-    style={'border':'1px solid black','width':'100%','height':'560px','alignItems': 'stretch', 'margin': '0px','display': 'flex', 'justifyContent': 'flex-between', 'overflow': 'hidden'})  # Ensure Row layout is reasonable and hide overflow
+    style={'border':'1px solid black','width':'100%','height':'666px','alignItems': 'stretch', 'margin': '0px','display': 'flex', 'justifyContent': 'flex-between', 'overflow': 'hidden'})  # Ensure Row layout is reasonable and hide overflow
 ], fluid=True, style={'marginLeft': '0px', 'padding': '0px', 'overflow': 'hidden'})  # Ensure inner Container margin and padding are consistent and hide overflow
 
 # Callback to switch between tabs
@@ -309,14 +309,22 @@ def update_map(clickData, n_clicks):
 # Callback to update the text component with billionaire count
 @app.callback(
     Output('billionaire-count-text', 'children'),
-    Input('choropleth-map', 'clickData')
+    [Input('choropleth-map', 'clickData'),
+     Input('select-all-button', 'n_clicks')]
 )
-def update_billionaire_count_text(clickData):
+def update_billionaire_count_text(clickData, n_clicks):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        trigger_id = None
+    else:
+        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    # If "Back to Global" button is clicked
+    if trigger_id == 'select-all-button':
+        return f"Global Billionaires: {global_billionaire_count}"
+
+    # If a country is clicked
     if clickData:
-        # Print clickData for debugging
-        # print("ClickData:", clickData)
-        
-        # Extract country code
         try:
             # Extract country code from customdata
             customdata = clickData['points'][0].get('customdata')

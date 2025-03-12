@@ -465,14 +465,22 @@ def update_map(clickData, n_clicks):
 # Callback to update the text component with billionaire count
 @app.callback(
     Output('billionaire-count-text', 'children'),
-    Input('choropleth-map', 'clickData')
+    [Input('choropleth-map', 'clickData'),
+     Input('select-all-button', 'n_clicks')]
 )
-def update_billionaire_count_text(clickData):
+def update_billionaire_count_text(clickData, n_clicks):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        trigger_id = None
+    else:
+        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    # If "Back to Global" button is clicked
+    if trigger_id == 'select-all-button':
+        return f"Global Billionaires: {global_billionaire_count}"
+
+    # If a country is clicked
     if clickData:
-        # Print clickData for debugging
-        # print("ClickData:", clickData)
-        
-        # Extract country code
         try:
             # Extract country code from customdata
             customdata = clickData['points'][0].get('customdata')
