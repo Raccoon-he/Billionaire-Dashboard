@@ -7,6 +7,7 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
+import numpy as np
 import pycountry
 import geopandas as gpd
 import altair as alt
@@ -184,7 +185,7 @@ tab1_content = dbc.Container([
         style={'flex':'1', 'border':'1px solid red', 'height': '100%', 'flex': '1',  'overflow': 'hidden'})  # Set Statistics column width ratio and hide overflow
     ], 
     # row: map+metrics
-    style={'border':'1px solid black','width':'100%','height':'560px','alignItems': 'stretch', 'margin': '0px','display': 'flex', 'justifyContent': 'flex-between', 'overflow': 'hidden'})  # Ensure Row layout is reasonable and hide overflow
+    style={'border':'1px solid black','width':'100%','height':'666px','alignItems': 'stretch', 'margin': '0px','display': 'flex', 'justifyContent': 'flex-between', 'overflow': 'hidden'})  # Ensure Row layout is reasonable and hide overflow
 ], fluid=True, style={'marginLeft': '0px', 'padding': '0px', 'overflow': 'hidden'})  # Ensure inner Container margin and padding are consistent and hide overflow
 
 # Tab 2 Content: Detailed Analysis
@@ -240,7 +241,7 @@ tab2_content = dbc.Container([
                             id='scatter-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
-                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0', 'border': '2px solid #FFD700'})
+                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})
                 ],width=6),
 
                 # stacked bar chart
@@ -251,7 +252,7 @@ tab2_content = dbc.Container([
                             id='stacked-bar-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
-                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0', 'border': '2px solid #FFD700'})
+                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})
                 ], width=6)
             ]),
 
@@ -268,18 +269,18 @@ tab2_content = dbc.Container([
                             id='pie-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )  
-                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0', 'border': '2px solid #FFD700'})  
+                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})  
                 ], width=6),
 
                 # Top 10 Companies Bar Chart
                 dbc.Col([
                     dbc.Card([
-                        dbc.CardHeader("Top 10 Wealth Sources", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center'}),
+                        dbc.CardHeader("Top 10 Wealth Sources", style={'backgroundColor': '#000000', 'color': '#FFD700', 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
                         dcc.Graph(
                             id='top-sources-bar-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
                         )
-                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0', 'border': '2px solid #FFD700'})
+                    ], style={"backgroundColor": bg_color, 'height': '333px', 'padding': '0', 'margin': '0'})
                 ], width=6)
             ])     
         ])
@@ -555,9 +556,9 @@ def update_scatter_chart(selected_countries, selected_industries):
         margin=dict(l=1, r=1, t=1, b=1),  # Remove internal margins
         autosize=True,  # Allow dynamic resizing
         xaxis = dict(title='Age', color='white', showgrid=True, gridcolor='#cccccc'),
-        yaxis = dict(title='Total Wealth (B)', color='white', showgrid=True, gridcolor='#cccccc'),
-        plot_bgcolor=bg_color,
-        paper_bgcolor=bg_color,
+        yaxis = dict(title='Total Wealth ($M)', color='white', showgrid=True, gridcolor='#cccccc'),
+        plot_bgcolor=card_color,
+        paper_bgcolor=card_color,
         showlegend = False,
     )
 
@@ -616,8 +617,8 @@ def update_stacked_bar_chart(selected_countries, selected_industries):
         xaxis = dict(title='Age', color='white', showgrid=True, gridcolor='#cccccc'),
         yaxis = dict(title='Count', color='white', showgrid=True, gridcolor='#cccccc'),
         barmode='stack',
-        plot_bgcolor=bg_color,
-        paper_bgcolor=bg_color,
+        plot_bgcolor=card_color,
+        paper_bgcolor=card_color,
         legend=dict(  
             orientation="h",  # Horizontal orientation
             yanchor="bottom", 
@@ -653,8 +654,9 @@ def update_pie_chart(selected_countries, selected_industries):
     if filtered_df.empty:
         fig = go.Figure()
         fig.update_layout(
-            plot_bgcolor=bg_color,
-            paper_bgcolor=bg_color,
+            #plot_bgcolor=bg_color,
+            plot_bgcolor='white',
+            #paper_bgcolor=bg_color,
             font=dict(color=text_color),
             margin=dict(l=1, r=1, t=10, b=1)
         )
@@ -707,8 +709,8 @@ def update_pie_chart(selected_countries, selected_industries):
     fig.update_layout(
         margin=dict(l=1, r=1, t=10, b=1),
         autosize=True,  
-        plot_bgcolor=bg_color, 
-        paper_bgcolor=bg_color,  
+        plot_bgcolor=card_color, 
+        paper_bgcolor=card_color,  
         font=dict(color=text_color),
     )
 
@@ -752,17 +754,17 @@ def update_top_sources_bar_chart(selected_countries, selected_industries):
         color='industries',  # Assign colors based on industry
         color_discrete_map=industries_color,
         orientation='h',
-        labels={'finalWorth': 'Wealth (B$)', 'source': 'Source'}
+        labels={'finalWorth': 'Wealth ($M)', 'source': 'Source'}
     )
 
     fig.update_traces(width=0.7)
 
     fig.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
-        xaxis=dict(title='Wealth (B$)', color='white', showgrid=True, gridcolor='#cccccc'),
+        xaxis=dict(title='Wealth ($M)', color='white', showgrid=True, gridcolor='#cccccc'),
         yaxis=dict(title='Source', color='white', categoryorder='total ascending'),  # Ensure sorting by total wealth
-        plot_bgcolor=bg_color,
-        paper_bgcolor=bg_color,
+        plot_bgcolor=card_color,
+        paper_bgcolor=card_color,
         showlegend=False,  # Remove legend
         title_text=None  # Remove plot title
     )
