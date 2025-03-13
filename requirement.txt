@@ -1,0 +1,11 @@
+dash==2.18.2
+dash_bootstrap_components==1.6.0
+dcc==2.14.3
+html==2.0.20
+plotly==6.0.0
+pandas==2.0.3
+numpy==1.24.4
+pycountry==24.6.1
+geopandas==0.13.2
+fiona==1.9.6
+altair==5.4.1
