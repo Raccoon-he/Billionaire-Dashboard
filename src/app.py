@@ -340,8 +340,8 @@ def update_key_statistics(clickData, n_clicks):
     # If "Back to Global" button is clicked
     if trigger_id == 'select-all-button':
         # Use global data
-        richest_person_global_final_worth_billion = richest_person_global['finalWorth'] / 1_000
-        return (html.Div(f"{richest_person_global['personName']}\n(${int(richest_person_global_final_worth_billion)}B)", style={'whiteSpace': 'pre-line'}),
+        richest_person_global_final_worth_billion = richest_person_global['finalWorth']
+        return (html.Div(f"{richest_person_global['personName']}\n(${int(richest_person_global_final_worth_billion)}M)", style={'whiteSpace': 'pre-line'}),
                 html.Div(f"{youngest_billionaire_global['personName']}\n({int(youngest_billionaire_global['age'])})", style={'whiteSpace': 'pre-line'}),
                 html.Div(f"{oldest_billionaire_global['personName']}\n({int(oldest_billionaire_global['age'])})", style={'whiteSpace': 'pre-line'}),
                 top_industry_global,
@@ -366,12 +366,12 @@ def update_key_statistics(clickData, n_clicks):
                 top_company = country_data.groupby("source")["finalWorth"].sum().idxmax()
                 
                 # Convert finalWorth from million dollars to billion dollars
-                richest_person_final_worth_billion = richest_person['finalWorth'] / 1_000
+                richest_person_final_worth_billion = richest_person['finalWorth']
                 
                 # Return the calculated values with line breaks using html.Div
-                return (html.Div(f"{richest_person['personName']}\n(${int(richest_person_final_worth_billion)}B)", style={'whiteSpace': 'pre-line'}),
-                        html.Div(f"{youngest_billionaire['personName']}\n({int(youngest_billionaire['age'])})", style={'whiteSpace': 'pre-line'}),
-                        html.Div(f"{oldest_billionaire['personName']}\n({int(oldest_billionaire['age'])})", style={'whiteSpace': 'pre-line'}),
+                return (html.Div(f"{richest_person['personName']}\n(${int(richest_person_final_worth_billion):,}M)", style={'whiteSpace': 'pre-line'}),
+                        html.Div(f"{youngest_billionaire['personName']}\n(Age: {int(youngest_billionaire['age'])})", style={'whiteSpace': 'pre-line'}),
+                        html.Div(f"{oldest_billionaire['personName']}\n(Age: {int(oldest_billionaire['age'])})", style={'whiteSpace': 'pre-line'}),
                         top_industry,
                         top_company)
         except Exception as e:
@@ -379,11 +379,11 @@ def update_key_statistics(clickData, n_clicks):
     
     # Default to global statistics if no country is selected or an error occurs
     # Convert finalWorth from million dollars to billion dollars
-    richest_person_global_final_worth_billion = richest_person_global['finalWorth'] / 1_000
+    richest_person_global_final_worth_billion = richest_person_global['finalWorth']
     
-    return (html.Div(f"{richest_person_global['personName']}\n(${int(richest_person_global_final_worth_billion)}B)", style={'whiteSpace': 'pre-line'}),
-            html.Div(f"{youngest_billionaire_global['personName']}\n({int(youngest_billionaire_global['age'])})", style={'whiteSpace': 'pre-line'}),
-            html.Div(f"{oldest_billionaire_global['personName']}\n({int(oldest_billionaire_global['age'])})", style={'whiteSpace': 'pre-line'}),
+    return (html.Div(f"{richest_person_global['personName']}\n(${int(richest_person_global_final_worth_billion):,}M)", style={'whiteSpace': 'pre-line'}),
+            html.Div(f"{youngest_billionaire_global['personName']}\n(Age: {int(youngest_billionaire_global['age'])})", style={'whiteSpace': 'pre-line'}),
+            html.Div(f"{oldest_billionaire_global['personName']}\n(Age: {int(oldest_billionaire_global['age'])})", style={'whiteSpace': 'pre-line'}),
             top_industry_global,
             top_company_global)
 
