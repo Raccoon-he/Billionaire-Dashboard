@@ -38,11 +38,6 @@ df['age_group'] = (df['age'] // 10) * 10
 # gender process
 df['gender'] = df['gender'].replace({'M': 'Male', 'F': 'Female'})
 
-# Prepare data for the Altair pie chart
-df_pie = df.groupby(["country", "industries"], as_index=False)["finalWorth"].sum()
-df_pie["total_wealth"] = df_pie.groupby("country")["finalWorth"].transform("sum")
-df_pie["percentage"] = (df_pie["finalWorth"] / df_pie["total_wealth"]) * 100
-
 # Extract richest person
 richest_person = df.loc[df["finalWorth"].idxmax(), ["personName", "finalWorth"]]
 
@@ -58,25 +53,26 @@ top_company = df.groupby("source")["finalWorth"].sum().idxmax()
 
 # Color for industries
 industries_color = {
-    "Automotive": "#FFFF00",
-    "Construction & Engineering": "#FFC0CB",
-    "Diversified": "#00FF00",
-    "Energy": "#00FFFF",
-    "Fashion & Retail": "#FFA500",
-    "Finance & Investments": "#FF00FF",
-    "Food & Beverage": "#FFFFFF",
-    "Gambling & Casinos": "#FF0000",
-    "Healthcare": "#00FFFF",
-    "Logistics": "#FFD700",
-    "Manufacturing": "#C0C0C0",
-    "Media & Entertainment": "#00FF80",
-    "Metals & Mining": "#B2FFFC",
-    "Real Estate": "#FF7F50",
-    "Service": "#87CEEB",
-    "Sports": "#FFFF33",
-    "Technology":"#FFDAB9",
-    "Telecom": "#E6E6FA"
+    "Automotive": "#FFD700",  # Gold (more vibrant than yellow)
+    "Construction & Engineering": "#FF69B4",  # Deeper pink
+    "Diversified": "#32CD32",  # Lime green (more vivid)
+    "Energy": "#1E90FF",  # Dodger blue (enhanced visibility)
+    "Fashion & Retail": "#FF8C00",  # Darker orange
+    "Finance & Investments": "#BA55D3",  # Medium orchid (better contrast)
+    "Food & Beverage": "#D3D3D3",  # Light gray instead of white
+    "Gambling & Casinos": "#DC143C",  # Crimson (rich red)
+    "Healthcare": "#00CED1",  # Dark turquoise (similar but more readable)
+    "Logistics": "#FFA500",  # Darker gold/orange
+    "Manufacturing": "#A9A9A9",  # Dark grayish silver
+    "Media & Entertainment": "#3CB371",  # Medium sea green
+    "Metals & Mining": "#A0522D", 
+    "Real Estate": "#FF6347",  # Tomato (richer coral)
+    "Service": "#4682B4",  # Steel blue (better contrast)
+    "Sports": "#FFFF99",  # Soft yellow
+    "Technology": "#FFB6C1",  # Light pink (but deeper)
+    "Telecom": "#9370DB"  # Medium purple (for readability)
 }
+
 
 # color
 bg_color = "#000000"
@@ -160,7 +156,7 @@ tab1_content = dbc.Container([
 
                 # Top Company
                 dbc.Col([
-                    html.P("Top Company", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center', 'marginBottom':'0%'}),
+                    html.P("Top Source", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center', 'marginBottom':'0%'}),
                     html.P(id='top-company', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
                 ], style={'height': '15%', 'textAlign': 'center', 'overflow': 'hidden'}),  # Height reduced to 15%
 
@@ -196,6 +192,10 @@ tab2_content = dbc.Container([
             dbc.Card([
                 dbc.CardHeader("Filters", style={'backgroundColor': bg_color, 'color': text_color, 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
                 dbc.CardBody([
+                    html.P(
+                        "Default: Global & All Industries",
+                        style={'color': '#cccccc', 'marginBottom': '4px', 'marginTop': '0px', 'fontSize': '14px'}
+                    ),
                     dcc.Dropdown(
                         id='country-dropdown',
                         options=[{'label': cou, 'value': cou} for cou in df['countryOfCitizenship'].unique()],
@@ -204,7 +204,7 @@ tab2_content = dbc.Container([
                         placeholder="Select countries",
                         style={'margin': '0', 'width': '100%'}
                     ),
-                    html.Br(),
+                    # html.Br(),
                     dcc.Dropdown(
                         id='industry-dropdown',
                         options=[{'label': ind, 'value': ind} for ind in df['industries'].unique()],
@@ -212,12 +212,8 @@ tab2_content = dbc.Container([
                         multi=True,
                         placeholder="Select industries",
                         style={'margin': '0', 'width': '100%'}
-                    ),
-                    html.P(
-                        "Default: Global & All Industries",
-                        style={'color': '#cccccc', 'marginTop': '8px'}
                     )
-                ])
+                ], style={'padding': '0'})
             ], style={"backgroundColor": bg_color, 'height': '186px', 'padding': '0', 'margin': '0'}),
 
             # industries color legend
@@ -662,9 +658,7 @@ def update_pie_chart(selected_countries, selected_industries):
     if filtered_df.empty:
         fig = go.Figure()
         fig.update_layout(
-            #plot_bgcolor=bg_color,
             plot_bgcolor='white',
-            #paper_bgcolor=bg_color,
             font=dict(color=text_color),
             margin=dict(l=1, r=1, t=10, b=1)
         )
@@ -687,19 +681,18 @@ def update_pie_chart(selected_countries, selected_industries):
         names="industries", 
         values="finalWorth", 
         color="industries",
-        color_discrete_map=industries_color,  
-        hover_data=["finalWorth", "percentage"]
+        color_discrete_map=industries_color
     )
 
-    # Remove the title and legend
-    fig.update_layout(title_text=None, showlegend=False)
+    # Assign custom data to pass the percentage values
+    fig.update_traces(customdata=selected_df[["percentage"]].to_numpy())
 
     # Modify text labels to show only for the top 3 industries
     fig.update_traces(
         textinfo="none",  # Hide all labels by default
         textposition="inside",
         insidetextorientation="radial",
-        hovertemplate="<b>%{label}</b><br>Wealth: %{value:.2f}B$<br>Percentage: %{customdata[1]:.2f}%"
+        hovertemplate="<b>%{label}</b><br>Wealth: %{value:.2f}B$<br>Percentage: %{customdata[0]:.2f}%"
     )
 
     # Show labels only for the top 3 industries
@@ -720,6 +713,7 @@ def update_pie_chart(selected_countries, selected_industries):
         plot_bgcolor=card_color, 
         paper_bgcolor=card_color,  
         font=dict(color=text_color),
+        showlegend=False
     )
 
     return fig
