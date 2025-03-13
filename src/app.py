@@ -80,7 +80,7 @@ card_color = "#333333"
 text_color = "#FFD700"
 
 # Create Dash app with Bootstrap
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True, title='Billionaires Landscape')
 
 app.layout = dbc.Container([
     # Main Heading and Tabs in the same row
