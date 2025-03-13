@@ -132,33 +132,33 @@ tab1_content = dbc.Container([
             dbc.Row([
                 # Richest Person
                 dbc.Col([
-                    html.P("Richest Person", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center', 'marginBottom':'0%'}),
-                    html.P(id='richest-person', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-                ], style={'height': '15%', 'textAlign': 'center', 'overflow': 'hidden', 'marginBottom':'5%'}),  # Height remains 20%
+                    html.P("Richest Person", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center', 'marginBottom':'0%'}),
+                    html.P(id='richest-person', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '18px', 'textAlign': 'center'})
+                ], style={'height': '15%', 'textAlign': 'center', 'overflow': 'hidden', 'marginBottom':'5%', 'marginTop': '15%'}),  # Height remains 20%
 
                 # Youngest Billionaire
                 dbc.Col([
-                    html.P("Youngest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center', 'marginBottom':'0%'}),
-                    html.P(id='youngest-billionaire', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
+                    html.P("Youngest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center', 'marginBottom':'0%'}),
+                    html.P(id='youngest-billionaire', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '18px', 'textAlign': 'center'})
                 ], style={'height': '15%', 'textAlign': 'center', 'overflow': 'hidden', 'marginBottom':'5%'}),  # Height remains 20%
 
                 # Oldest Billionaire
                 dbc.Col([
-                    html.P("Oldest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center', 'marginBottom':'0%'}),
-                    html.P(id='oldest-billionaire', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center', })
+                    html.P("Oldest Billionaire", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center', 'marginBottom':'0%'}),
+                    html.P(id='oldest-billionaire', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '18px', 'textAlign': 'center', })
                 ], style={'height': '15%', 'textAlign': 'center', 'overflow': 'hidden', 'marginBottom':'5%'}),  # Height remains 20%
 
                 # Top Industry
                 dbc.Col([
-                    html.P("Top Industry", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center', 'marginBottom':'0%'}),
-                    html.P(id='top-industry', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-                ], style={'height': '15%', 'textAlign': 'center', 'overflow': 'hidden'}),  # Height reduced to 15%
+                    html.P("Top Industry", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center', 'marginBottom':'0%'}),
+                    html.P(id='top-industry', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '18px', 'textAlign': 'center'})
+                ], style={'height': '12%', 'textAlign': 'center', 'overflow': 'hidden'}),  # Height reduced to 15%
 
                 # Top Company
                 dbc.Col([
-                    html.P("Top Source", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '14px', 'textAlign': 'center', 'marginBottom':'0%'}),
-                    html.P(id='top-company', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center'})
-                ], style={'height': '15%', 'textAlign': 'center', 'overflow': 'hidden'}),  # Height reduced to 15%
+                    html.P("Top Source", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center', 'marginBottom':'0%'}),
+                    html.P(id='top-company', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '18px', 'textAlign': 'center'})
+                ], style={'height': '12%', 'textAlign': 'center', 'overflow': 'hidden'}),  # Height reduced to 15%
 
                 # Back to Global Button
                 dbc.Col([
@@ -171,7 +171,7 @@ tab1_content = dbc.Container([
                             'backgroundColor': '#FFD700', 
                             'color': '#000000',
                             'border': '0px',
-                            'fontSize': '10px', 
+                            'fontSize': '14px', 
                         }
                     )
                 ],style={'height': '5%', 'textAlign': 'center', 'overflow': 'hidden'})  # Height for button
@@ -194,7 +194,7 @@ tab2_content = dbc.Container([
                 dbc.CardBody([
                     html.P(
                         "Default: Global & All Industries",
-                        style={'color': '#cccccc', 'marginBottom': '4px', 'marginTop': '0px', 'fontSize': '14px'}
+                        style={'color': '#cccccc', 'marginBottom': '4px', 'marginTop': '0px', 'fontSize': '14px', 'textAlign': 'center'}
                     ),
                     dcc.Dropdown(
                         id='country-dropdown',
@@ -202,7 +202,7 @@ tab2_content = dbc.Container([
                         value=[],  # Default to all countries
                         multi=True,
                         placeholder="Select countries",
-                        style={'margin': '0', 'width': '100%'}
+                        style={'margin': '0', 'width': '100%', 'marginLeft': '5px'}
                     ),
                     # html.Br(),
                     dcc.Dropdown(
@@ -211,7 +211,7 @@ tab2_content = dbc.Container([
                         value=[],  # Default to all industries
                         multi=True,
                         placeholder="Select industries",
-                        style={'margin': '0', 'width': '100%'}
+                        style={'margin': '0', 'width': '100%', 'marginLeft': '5px', 'marginTop': '10px',}
                     )
                 ], style={'padding': '0'})
             ], style={"backgroundColor": bg_color, 'height': '186px', 'padding': '0', 'margin': '0'}),
@@ -590,8 +590,8 @@ def update_stacked_bar_chart(selected_countries, selected_industries):
     if filtered_df.empty:
         fig = go.Figure()
         fig.update_layout(
-            plot_bgcolor=bg_color,
-            paper_bgcolor=bg_color,
+            plot_bgcolor=card_color,
+            paper_bgcolor=card_color,
             font=dict(color=text_color),
             margin=dict(l=1, r=1, t=10, b=1)
         )
@@ -658,7 +658,8 @@ def update_pie_chart(selected_countries, selected_industries):
     if filtered_df.empty:
         fig = go.Figure()
         fig.update_layout(
-            plot_bgcolor='white',
+            plot_bgcolor=card_color,
+            paper_bgcolor=card_color,
             font=dict(color=text_color),
             margin=dict(l=1, r=1, t=10, b=1)
         )
@@ -692,7 +693,7 @@ def update_pie_chart(selected_countries, selected_industries):
         textinfo="none",  # Hide all labels by default
         textposition="inside",
         insidetextorientation="radial",
-        hovertemplate="<b>%{label}</b><br>Wealth: %{value:.2f}B$<br>Percentage: %{customdata[0]:.2f}%"
+        hovertemplate="<b>%{label}</b><br>Wealth: %{value:.2f}$M<br>Percentage: %{customdata[0]:.2f}%"
     )
 
     # Show labels only for the top 3 industries
