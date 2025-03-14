@@ -553,7 +553,8 @@ def update_scatter_chart(selected_countries, selected_industries):
         y='finalWorth',
         color='industries',
         color_discrete_map=industries_color,
-        size_max=8
+        size_max=8,
+        labels={'finalWorth': 'Sum of Wealth ($M)', 'age': 'Age', 'industries': 'Industry'}
     )
 
     fig.update_layout(
@@ -611,7 +612,8 @@ def update_stacked_bar_chart(selected_countries, selected_industries):
         x='age_group',
         y='count',
         color='gender',
-        color_discrete_map=custom_colors
+        color_discrete_map=custom_colors,
+        labels={'age_group': 'Age Decade', 'count': 'Count', 'gender': 'Gender'}
     )
 
     # Update the layout
@@ -693,7 +695,7 @@ def update_pie_chart(selected_countries, selected_industries):
         textinfo="none",  # Hide all labels by default
         textposition="inside",
         insidetextorientation="radial",
-        hovertemplate="<b>%{label}</b><br>Wealth: %{value:.2f}$M<br>Percentage: %{customdata[0]:.2f}%"
+        hovertemplate="<b>%{label}</b><br>Sum of Wealth: %{value:.2f}$M<br>Percentage: %{customdata[0]:.2f}%"
     )
 
     # Show labels only for the top 3 industries
@@ -757,7 +759,7 @@ def update_top_sources_bar_chart(selected_countries, selected_industries):
         color='industries',  # Assign colors based on industry
         color_discrete_map=industries_color,
         orientation='h',
-        labels={'finalWorth': 'Wealth ($M)', 'source': 'Source'}
+        labels={'finalWorth': 'Sum of Wealth ($M)', 'source': 'Source'}
     )
 
     fig.update_traces(width=0.7)
