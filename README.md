@@ -6,7 +6,7 @@
 ## Getting Started
 
 - **Installation**: Clone the repository and install dependencies using `pip install -r requirements.txt`.
-- **Launching**: Run the dashboard by executing `python3 app.py` and navigate to `http://127.0.0.1:8050/` in your web browser.
+- **Launching**: Run the dashboard by executing `python app.py` and navigate to `http://127.0.0.1:8050/` in your web browser.
 
 ## Dashboard Features
 
