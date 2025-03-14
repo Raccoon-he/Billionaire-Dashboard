@@ -1,58 +1,43 @@
 # Billionaires Landscape Dashboard
-A data exploration tool that uses ***billionaire_statistics*** to help users understand **wealth distribution, industry dominance, and demographic patterns** among the world’s billionaires. It includes a variety of **interactive features**, such as:
+
+## Overview
+**Billionaires Landscape Dashboard** uses ***billionaire_statistics*** data to offer an interactive and data-driven exploration of the global billionaire ecosystem. Designed to uncover insights into billionaire demographics, wealth distribution, and industry dominance, the dashboard features advanced visualizations and customizable filters. By analyzing trends across industries, age groups, and wealth sources, users can gain a deeper understanding of the forces shaping the world’s wealthiest individuals and their economic impact.
+
+## Getting Started
+
+- **Installation**: Clone the repository and install dependencies using `pip install -r requirements.txt`.
+- **Launching**: Run the dashboard by executing `python3 app.py` and navigate to `http://127.0.0.1:8050/` in your web browser.
 
 ## Dashboard Features
 
-#### Summary Statistics
-Provides key **insights into the billionaire landscape**, including:
+### Tab 1: Overlook
 
-- **Richest Person:** Name and final worth of the world's wealthiest billionaire.
-- **Youngest & Oldest Billionaires:** Age details for the youngest and oldest billionaires.
-- **Top Industry:** The industry that has the highest billionaire wealth concentration.
-- **Top Company:** The company with the highest billionaire wealth.
+Providing a comprehensive overview of billionaire populations across different countries.
 
------
+- **Map:** Displays the global distribution of billionaires, where colour intensity represents the number of billionaires per country.
+- **Filters:** Click specific country on the map to filter country.
+- **Richest Person:** Displays name and wealth of the wealthiest billionaire.
+- **Youngest Billionaires:** Displays name and age of the youngest billionaire.
+- **Oldest Billionaires:** Displays name and age of the oldest billionaire.
+- **Top Industry:** Displays the industry with the highest billionaire wealth concentration.
+- **Top Source:** Displays the source with the highest billionaire wealth concentration.
 
-#### Choropleth Map: Billionaire Density by Country
-Displays the **global distribution of billionaires**, where **colour intensity** represents the **number of billionaires** per country.
+**Example**
+![Overlook](/img/Billionires_overlook.jpg)  
 
-- **Filters** allow users to focus on **specific countries**.
+### Tab 2: More Info
 
------
+Delving into the characteristics and financial influence of billionaires.
 
-#### Industry Trend Line Chart
-Shows how **billionaire wealth trends over time**.
+- **Filters:** Selecting specific countries or industries.
+- **Wealth Distribution Across Different Ages:** A scatter plot showcasing how wealth varies across different age.
+- **Comparison of Male and Female Counts:** A bar chart illustrating gender disparities in billionaire representation.
+- **Industry Wealth Proportions:** A pie chart highlighting the share of total billionaire wealth across various industries.
+- **Top 10 Wealth Sources:** A ranked bar chart identifying the primary sources of billionaire wealth.
 
-- The X-axis represents **time (years)**, and the Y-axis represents **total billionaire wealth**.
-- Lines are **colour-coded by industry**, making it easy to compare industry growth.
+**Example**
+![Moreinfo](/img/Billionires_moreinfo.jpg)  
 
------
+## Contributing
 
-#### Industry Wealth Distribution Pie Chart
-Represents the **proportion of billionaire wealth per industry**.
-
-- Allows users to see **which industries dominate global/country wealth**.
-
------
-
-#### Top 10 Companies Bar Chart
-Displays the **top 10 companies with the highest billionaire wealth**.
-
-- **Colour-coded by industry**, making it easy to see industry concentration in top companies.
-
------
-
-#### Demographic Distribution Histogram
-Visualizes **billionaire age distribution**, with colour-coded bars for **male and female billionaires**.
-
-- Helps understand **age demographics among billionaires**.
-
-## Interactivity & Filters
-All charts are **interactive** and allow users to:
-
-- **Filter by Country**: Selecting a country updates all other visualizations.
-- **Industry Selection**: Users can focus on specific industries to analyze trends.
-
-## Example Sketch
-![Dashboard Sketch](/img/Billionires_sketch.jpg)
-[Link to Sketch](https://github.com/Raccoon-he/Billionaire-Dashboard/blob/main/img/Billionires_sketch.jpg)
+We welcome contributions! If you have ideas for new features or improvements, please fork the repository and submit a pull request.
