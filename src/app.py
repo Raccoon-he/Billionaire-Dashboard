@@ -53,31 +53,31 @@ top_company = df.groupby("source")["finalWorth"].sum().idxmax()
 
 # Color for industries
 industries_color = {
-    "Automotive": "#FFD700",  # Gold (more vibrant than yellow)
+    "Automotive": "#FFD700",  # Gold 
     "Construction & Engineering": "#FF69B4",  # Deeper pink
-    "Diversified": "#32CD32",  # Lime green (more vivid)
-    "Energy": "#1E90FF",  # Dodger blue (enhanced visibility)
+    "Diversified": "#32CD32",  # Lime green 
+    "Energy": "#1E90FF",  # Dodger blue 
     "Fashion & Retail": "#FF8C00",  # Darker orange
-    "Finance & Investments": "#BA55D3",  # Medium orchid (better contrast)
-    "Food & Beverage": "#D3D3D3",  # Light gray instead of white
-    "Gambling & Casinos": "#DC143C",  # Crimson (rich red)
-    "Healthcare": "#00CED1",  # Dark turquoise (similar but more readable)
+    "Finance & Investments": "#BA55D3",  # Medium orchid 
+    "Food & Beverage": "#D3D3D3",  # Light gray 
+    "Gambling & Casinos": "#DC143C",  # Crimson
+    "Healthcare": "#00CED1",  # Dark turquoise
     "Logistics": "#FFA500",  # Darker gold/orange
     "Manufacturing": "#A9A9A9",  # Dark grayish silver
     "Media & Entertainment": "#3CB371",  # Medium sea green
-    "Metals & Mining": "#A0522D", 
-    "Real Estate": "#FF6347",  # Tomato (richer coral)
-    "Service": "#4682B4",  # Steel blue (better contrast)
+    "Metals & Mining": "#A0522D",  # Brown
+    "Real Estate": "#FF6347",  # Tomato 
+    "Service": "#4682B4",  # Steel blue 
     "Sports": "#FFFF99",  # Soft yellow
-    "Technology": "#FFB6C1",  # Light pink (but deeper)
-    "Telecom": "#9370DB"  # Medium purple (for readability)
+    "Technology": "#FFB6C1",  # Light pink 
+    "Telecom": "#9370DB"  # Medium purple 
 }
-
 
 # color
 bg_color = "#000000"
 card_color = "#333333"
 text_color = "#FFD700"
+
 
 # Create Dash app with Bootstrap
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True, title='Billionaires Landscape')
@@ -156,7 +156,7 @@ tab1_content = dbc.Container([
 
                 # Top Company
                 dbc.Col([
-                    html.P("Top Source", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center', 'marginBottom':'0%'}),
+                    html.P("Top Source of Wealth", style={'color': '#D3D3D3', 'fontWeight': 'bold', 'fontSize': '16px', 'textAlign': 'center', 'marginBottom':'0%'}),
                     html.P(id='top-company', style={'color': '#FFD700', 'fontWeight': 'bold', 'fontSize': '18px', 'textAlign': 'center'})
                 ], style={'height': '12%', 'textAlign': 'center', 'overflow': 'hidden'}),  # Height reduced to 15%
 
@@ -232,7 +232,7 @@ tab2_content = dbc.Container([
                 dbc.Col([
                     # scatter plot
                     dbc.Card([
-                        dbc.CardHeader("Wealth Distribution Across Different Ages", style={'backgroundColor': bg_color, 'color': text_color, 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
+                        dbc.CardHeader("Wealth Distribution Across Ages", style={'backgroundColor': bg_color, 'color': text_color, 'fontWeight': 'bold', 'textAlign': 'center', 'padding': '0'}),
                         dcc.Graph(
                             id='scatter-chart',
                             style={'height': '100%', 'width': '100%', 'margin': '0', 'padding': '0'}
@@ -294,7 +294,6 @@ def render_tab_content(tab):
         return tab1_content
     elif tab == 'tab-2':
         return tab2_content
-
 
 def calculate_zoom_level(area):
     # Define minimum and maximum zoom values
@@ -525,7 +524,8 @@ def update_legend(selected_industries):
         )
     return legend_items
 
-# Callback to update the scatter chart based on the selected filters
+
+# Callback to update the scatter plot based on the selected filters
 @app.callback(
     Output('scatter-chart', 'figure'),
     [Input('country-dropdown', 'value'),
@@ -544,7 +544,7 @@ def update_scatter_chart(selected_countries, selected_industries):
         filtered_df = filtered_df[filtered_df['industries'].isin(selected_industries)]
 
     # Prepare the data for the scatter plot
-    scatter_data = filtered_df.groupby(['age', 'industries'])['finalWorth'].sum().reset_index()
+    scatter_data = filtered_df.groupby(['age', 'industries', 'personName'])['finalWorth'].sum().reset_index()
 
     # Create the scatter plot
     fig = px.scatter(
@@ -554,7 +554,13 @@ def update_scatter_chart(selected_countries, selected_industries):
         color='industries',
         color_discrete_map=industries_color,
         size_max=8,
-        labels={'finalWorth': 'Sum of Wealth ($M)', 'age': 'Age', 'industries': 'Industry'}
+        labels={'finalWorth': 'Sum of Wealth ($M)', 'age': 'Age', 'industries': 'Industry'},
+        hover_data={'personName': True, 'age': True, 'finalWorth': True, 'industries': True} 
+    )
+
+    # Customize the tooltip
+    fig.update_traces(
+        hovertemplate="<b>%{customdata[0]}</b><br>Industry: %{customdata[1]}<br>Age: %{x}<br>Total Wealth: $%{y}M<extra></extra>"
     )
 
     fig.update_layout(
@@ -568,6 +574,7 @@ def update_scatter_chart(selected_countries, selected_industries):
     )
 
     return fig
+
 
 # Callback to update the stacked bar chart based on the selected filters
 @app.callback(
@@ -613,15 +620,25 @@ def update_stacked_bar_chart(selected_countries, selected_industries):
         y='count',
         color='gender',
         color_discrete_map=custom_colors,
-        labels={'age_group': 'Age Decade', 'count': 'Count', 'gender': 'Gender'}
+        labels={'age_group': 'Age Decade', 'count': 'Count', 'gender': 'Gender'},
+        hover_data={'age_group': True, 'count': True},
+        text='gender'
+    )
+
+    # Remove text labels from the bars
+    fig.update_traces(textposition='none')
+
+    # Customize the tooltip using hovertemplate
+    fig.update_traces(
+        hovertemplate="<b>Age Group: %{x}</b><br>Gender: %{text}<br>Count: %{y}<extra></extra>"
     )
 
     # Update the layout
     fig.update_layout(
         margin=dict(l=1, r=1, t=1, b=1),  # Remove internal margins
         autosize=True,  # Allow dynamic resizing
-        xaxis = dict(title='Age', color='white', showgrid=True, gridcolor='#cccccc'),
-        yaxis = dict(title='Count', color='white', showgrid=True, gridcolor='#cccccc'),
+        xaxis=dict(title='Age', color='white', showgrid=True, gridcolor='#cccccc'),
+        yaxis=dict(title='Count', color='white', showgrid=True, gridcolor='#cccccc'),
         barmode='stack',
         plot_bgcolor=card_color,
         paper_bgcolor=card_color,
@@ -637,6 +654,7 @@ def update_stacked_bar_chart(selected_countries, selected_industries):
     )
 
     return fig
+
 
 # Callback to update the pie chart based on the selected filters
 @app.callback(
@@ -759,10 +777,19 @@ def update_top_sources_bar_chart(selected_countries, selected_industries):
         color='industries',  # Assign colors based on industry
         color_discrete_map=industries_color,
         orientation='h',
-        labels={'finalWorth': 'Sum of Wealth ($M)', 'source': 'Source'}
+        labels={'finalWorth': 'Sum of Wealth ($M)', 'source': 'Source'},
+        hover_data={'source': True, 'finalWorth': True},
+        text='industries'
     )
 
-    fig.update_traces(width=0.7)
+    # Remove text labels from the bars
+    fig.update_traces(textposition='none')
+
+    # Customize the tooltip
+    fig.update_traces(
+        hovertemplate="<b>Source: %{y}</b><br>Industry: %{text}<br>Wealth: $%{x}M<extra></extra>",
+        width=0.7  
+    )
 
     fig.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
